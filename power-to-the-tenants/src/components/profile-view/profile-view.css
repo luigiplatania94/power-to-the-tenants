@@ -1,0 +1,24 @@
+.flex-container {
+    display: flex;
+    flex-direction: column; /* This makes the divs stack vertically */
+    align-items: center; /* This will center the divs horizontally */
+  }
+  
+  .pictureBox {
+    width: 100vw;
+    height: 40vh;
+  }
+  
+  .box {
+    width: 100vw;
+    height: 30vh;
+  }
+  
+  
+  /* Color Theme Swatches in Hex */
+  .Primary-Dark-Teal { background-color: #348888; }
+  .Primary-Teal { background-color: #22BABB; }
+  .Primary-Light-Teal { background-color: #9EF8EE; }
+  .Secondary-Orange { background-color: #FA7F08; }
+  .Secondary-Dark-Orange { background-color: #F24405; }
+  
