@@ -29,18 +29,28 @@ public class RoomieController : ControllerBase
     [HttpPost]
     public ActionResult<Roomie> CreateRoomie([FromBody] CreateRoomieModel model)
     {
-        // Input validation can be done here if needed
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        // Call the service to create the new Roomie
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
         var createdRoomie = _roomieService.CreateRoomie(model);
         
         // Return a response, indicating success (e.g., 201 Created)
         return CreatedAtAction("GetRoomieById", new { id = createdRoomie.Id }, createdRoomie);
     }
+    
 
-
+    [HttpPut("{id}")]
+    public ActionResult<Roomie> UpdateRoomie(Guid id, [FromBody] UpdateRoomieModel model)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
+        var existingRoomie = _roomieService.GetRoomieById(id);
+        if (existingRoomie is null) return NotFound();
+        
+        existingRoomie.ProfileImage = model.ProfileImage;
+        existingRoomie.Description = model.Description;
+        existingRoomie.Attributes = model.Attributes;
+        
+        return Ok(existingRoomie); // Return a 200 OK response if the update was successful
+    }
 }
+
