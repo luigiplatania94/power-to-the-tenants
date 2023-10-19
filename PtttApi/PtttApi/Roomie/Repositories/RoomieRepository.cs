@@ -28,4 +28,9 @@ public class RoomieRepository : IRoomieRepository
         return Roomies
             .FirstOrDefault(r => r.Id == id); // LINQ first item in collection that matches this criteria or return null
     }
+    
+    public void CreateRoomie(Roomie roomie)
+    {
+        Roomies.Add(roomie);
+    }
 }

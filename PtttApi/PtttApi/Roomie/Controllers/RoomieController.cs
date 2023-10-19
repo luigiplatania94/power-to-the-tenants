@@ -17,13 +17,30 @@ public class RoomieController : ControllerBase
     }
 
 
-    //http get method 
-    // GetRoomieById
     [HttpGet("{id}")]
     public Results<Ok<Roomie>, NotFound> GetRoomieById(Guid id)
     {
-        var Roomie = _roomieService.GetRoomieById(id);
-        
-        return Roomie is null ? TypedResults.NotFound() : TypedResults.Ok(Roomie);
+        var roomie = _roomieService.GetRoomieById(id);
+
+        return roomie is null ? TypedResults.NotFound() : TypedResults.Ok(roomie);
     }
+
+
+    [HttpPost]
+    public ActionResult<Roomie> CreateRoomie([FromBody] CreateRoomieModel model)
+    {
+        // Input validation can be done here if needed
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        // Call the service to create the new Roomie
+        var createdRoomie = _roomieService.CreateRoomie(model);
+        
+        // Return a response, indicating success (e.g., 201 Created)
+        return CreatedAtAction("GetRoomieById", new { id = createdRoomie.Id }, createdRoomie);
+    }
+
+
 }
