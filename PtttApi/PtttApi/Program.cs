@@ -10,7 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddScoped<IRoomieRepository, RoomieRepository>();
+builder.Services.AddSingleton<IRoomieRepository, RoomieRepository>();
 builder.Services.AddTransient<IRoomieService, RoomieService>();
 
 // allows for anyone to ask for anything
