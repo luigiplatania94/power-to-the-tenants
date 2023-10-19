@@ -52,5 +52,17 @@ public class RoomieController : ControllerBase
         
         return Ok(existingRoomie); // Return a 200 OK response if the update was successful
     }
+    
+    [HttpDelete("{id}")]
+    public IActionResult DeleteRoomie(Guid id)
+    {
+        var existingRoomie = _roomieService.GetRoomieById(id);
+        if (existingRoomie is null) return NotFound();
+
+        _roomieService.DeleteRoomie(id);
+
+        // Return a 204 No Content response to indicate a successful deletion
+        return NoContent();
+    }
 }
 

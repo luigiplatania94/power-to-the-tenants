@@ -33,4 +33,9 @@ public class RoomieService : IRoomieService
 
         return newRoomie;
     }
+    
+    public void DeleteRoomie(Guid id)
+    {
+        _roomieRepository.DeleteRoomie(id);
+    }
 }

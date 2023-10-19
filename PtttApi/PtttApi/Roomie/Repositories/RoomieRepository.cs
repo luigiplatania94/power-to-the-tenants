@@ -33,4 +33,9 @@ public class RoomieRepository : IRoomieRepository
     {
         Roomies.Add(roomie);
     }
+
+    public void DeleteRoomie(Guid id)
+    {
+        Roomies.Remove(GetRoomieById(id));
+    }
 }
