@@ -17,13 +17,48 @@ public class RoomieController : ControllerBase
     }
 
 
-    //http get method 
-    // GetRoomieById
     [HttpGet("{id}")]
     public Results<Ok<Roomie>, NotFound> GetRoomieById(Guid id)
     {
-        var Roomie = _roomieService.GetRoomieById(id);
+        var roomie = _roomieService.GetRoomieById(id);
+
+        return roomie is null ? TypedResults.NotFound() : TypedResults.Ok(roomie);
+    }
+
+
+    [HttpPost]
+    public ActionResult<Roomie> CreateRoomie([FromBody] CreateRoomieModel model)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         
-        return Roomie is null ? TypedResults.NotFound() : TypedResults.Ok(Roomie);
+        var createdRoomie = _roomieService.CreateRoomie(model);
+        
+        return Ok(createdRoomie); // Return a 200 OK response if the post was successful
+    }
+    
+
+    [HttpPut("{id}")]
+    public ActionResult<Roomie> UpdateRoomie(Guid id, [FromBody] UpdateRoomieModel model)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
+        var existingRoomie = _roomieService.GetRoomieById(id);
+        if (existingRoomie is null) return NotFound();
+
+        existingRoomie = _roomieService.UpdateRoomie(existingRoomie, model);
+        
+        return Ok(existingRoomie); // Return a 200 OK response if the update was successful
+    }
+    
+    [HttpDelete("{id}")]
+    public IActionResult DeleteRoomie(Guid id)
+    {
+        var existingRoomie = _roomieService.GetRoomieById(id);
+        if (existingRoomie is null) return NotFound();
+
+        _roomieService.DeleteRoomie(id);
+        
+        return Ok();
     }
 }
+
