@@ -33,8 +33,7 @@ public class RoomieController : ControllerBase
         
         var createdRoomie = _roomieService.CreateRoomie(model);
         
-        // Return a response, indicating success (e.g., 201 Created)
-        return CreatedAtAction("GetRoomieById", new { id = createdRoomie.Id }, createdRoomie);
+        return Ok(createdRoomie); // Return a 200 OK response if the post was successful
     }
     
 
@@ -45,10 +44,8 @@ public class RoomieController : ControllerBase
         
         var existingRoomie = _roomieService.GetRoomieById(id);
         if (existingRoomie is null) return NotFound();
-        
-        existingRoomie.ProfileImage = model.ProfileImage;
-        existingRoomie.Description = model.Description;
-        existingRoomie.Attributes = model.Attributes;
+
+        existingRoomie = _roomieService.UpdateRoomie(existingRoomie, model);
         
         return Ok(existingRoomie); // Return a 200 OK response if the update was successful
     }
@@ -60,9 +57,8 @@ public class RoomieController : ControllerBase
         if (existingRoomie is null) return NotFound();
 
         _roomieService.DeleteRoomie(id);
-
-        // Return a 204 No Content response to indicate a successful deletion
-        return NoContent();
+        
+        return Ok();
     }
 }
 

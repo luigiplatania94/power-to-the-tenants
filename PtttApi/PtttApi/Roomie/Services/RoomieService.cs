@@ -38,4 +38,13 @@ public class RoomieService : IRoomieService
     {
         _roomieRepository.DeleteRoomie(id);
     }
+
+    public Roomie UpdateRoomie(Roomie existingRoomie, UpdateRoomieModel model)
+    {
+        existingRoomie.ProfileImage = model.ProfileImage;
+        existingRoomie.Description = model.Description;
+        existingRoomie.Attributes = model.Attributes;
+        
+        return existingRoomie;
+    }
 }
