@@ -17,6 +17,11 @@ public class RoomieService : IRoomieService
         return _roomieRepository.GetRoomieById(id);
     }
     
+    public IEnumerable<Roomie> GetAllRoomies()
+    {
+        return _roomieRepository.GetAllRoomies();
+    }
+    
     public Roomie CreateRoomie(CreateRoomieModel model)
     {
         // Business logic for creating a new Roomie instance

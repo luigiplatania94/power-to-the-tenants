@@ -4,7 +4,7 @@ namespace PtttApi.Repositories;
 
 public class RoomieRepository : IRoomieRepository
 {
-    private List<Roomie> Roomies = new List<Roomie>
+    private List<Roomie> roomies = new List<Roomie>
     {
         new Roomie
         {
@@ -25,17 +25,22 @@ public class RoomieRepository : IRoomieRepository
     
     public Roomie? GetRoomieById(Guid id)
     {
-        return Roomies
+        return roomies
             .FirstOrDefault(r => r.Id == id); // LINQ first item in collection that matches this criteria or return null
+    }
+    
+    public IEnumerable<Roomie> GetAllRoomies()
+    {
+        return roomies;
     }
     
     public void CreateRoomie(Roomie roomie)
     {
-        Roomies.Add(roomie);
+        roomies.Add(roomie);
     }
 
     public void DeleteRoomie(Guid id)
     {
-        Roomies.Remove(GetRoomieById(id));
+        roomies.Remove(GetRoomieById(id));
     }
 }
