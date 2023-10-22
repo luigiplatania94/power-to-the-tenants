@@ -1,20 +1,21 @@
-.flex-container {
-    display: flex;
-    flex-direction: column; /* This makes the divs stack vertically */
-    align-items: center; /* This will center the divs horizontally */
-  }
-  
-  .pictureBox {
-    width: 100vw;
-    height: 40vh;
-  }
-  
-  .box {
-    width: 100vw;
-    height: 30vh;
-  }
-  
-  
+.circle-container {
+  width: 400px; /* Set the width and height to create a circle */
+  height: 400px;
+  border-radius: 50%; /* Make it a circle by setting border-radius to 50% */
+  overflow: hidden; /* Ensure the image stays within the circle */
+  background-color: #f0f0f0; /* You can set a background color for the circle */
+}
+
+.circle-container img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 100%; /* Ensure the image fits within the circle */
+  border-radius: 50%; /* Clip the image to match the circle */
+}
+
+
   /* Color Theme Swatches in Hex */
   .Primary-Dark-Teal { background-color: #348888; }
   .Primary-Teal { background-color: #22BABB; }

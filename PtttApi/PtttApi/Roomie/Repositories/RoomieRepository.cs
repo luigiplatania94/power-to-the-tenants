@@ -10,7 +10,7 @@ public class RoomieRepository : IRoomieRepository
         {
             Id = new Guid("dda26589-e479-4864-b19e-70b7de9f750c"),
             ProfileImage = "https://images.unsplash.com/photo-1560807707-8cc77767d783?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwyMzR8MHwxfGFsbHwxfHx8fHx8fHwxNjE1OTU2MzM0&ixlib=rb-1.2.1&q=80&w=400",
-            Description = "Lola is a playful pup who loves morning walks.",
+            Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             Attributes = new List<string> {"Friendly", "Loves toys", "Early Bird"},
         },
         new Roomie
