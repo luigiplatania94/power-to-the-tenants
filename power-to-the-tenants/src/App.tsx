@@ -1,15 +1,21 @@
 import './App.css'
-import { ProfileView } from './components/profile-view/profile-view'
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import ViewAllProfiles from "./components/view-all-profiles/view-all-profiles.tsx";
+import {ProfileView} from "./components/profile-view/profile-view.tsx";
+
 
 function App() {
-  // picture 
-  // description
-  // array of chips (basic)
-
   return (
-    //fragments: virtual folder
-    <> 
-      <ProfileView></ProfileView>
+
+    <>
+        <div className="App">
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<ViewAllProfiles />}/>
+                    <Route path="/view-profile/:id" element={<ProfileView />}/>
+                </Routes>
+            </BrowserRouter>
+        </div>
     </>
   )
 }

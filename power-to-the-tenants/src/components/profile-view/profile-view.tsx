@@ -3,9 +3,11 @@ import { fetchRoomie } from '../../services/roomie-service';
 import './profile-view.css';
 import { Chip } from '@mui/material';
 import {Roomie} from "../../models/roomie.ts";
+import {useParams} from "react-router-dom";
 
 export function ProfileView() {
-    const id = "dda26589-e479-4864-b19e-70b7de9f750c";
+    // const id = "dda26589-e479-4864-b19e-70b7de9f750c";
+    const { id } = useParams();
     
     const [roomie, setRoomie ] = useState<Roomie>();
 

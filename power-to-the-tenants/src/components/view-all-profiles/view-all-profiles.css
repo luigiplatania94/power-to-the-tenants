@@ -1,0 +1,28 @@
+.roomie-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.roomie-table th, .roomie-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.roomie-table th {
+    background-color: #f2f2f2;
+}
+
+.roomie-image {
+    width: 100px; 
+    height: 100px; 
+    object-fit: cover;
+}
+
+/* Color Theme Swatches in Hex */
+.Primary-Dark-Teal { background-color: #348888; }
+.Primary-Teal { background-color: #22BABB; }
+.Primary-Light-Teal { background-color: #9EF8EE; }
+.Secondary-Orange { background-color: #FA7F08; }
+.Secondary-Dark-Orange { background-color: #F24405; }
