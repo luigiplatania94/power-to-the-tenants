@@ -25,6 +25,14 @@ public class RoomieController : ControllerBase
         return roomie is null ? TypedResults.NotFound() : TypedResults.Ok(roomie);
     }
 
+    [HttpGet("all")]
+    public ActionResult<IEnumerable<Roomie>> GetAllRoomies()
+    {
+        var roomies = _roomieService.GetAllRoomies();
+        return Ok(roomies);
+    }
+
+    
 
     [HttpPost]
     public ActionResult<Roomie> CreateRoomie([FromBody] CreateRoomieModel model)
