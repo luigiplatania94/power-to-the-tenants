@@ -64,7 +64,7 @@ function ViewAllProfiles() {
                                     </TableCell>
                                     <TableCell>
                                         <ul>
-                                            <Button size="small" variant="contained" href={`/view-profile/${roomie.id}`}>View Profile</Button>
+                                            <Button variant="contained" href={`/view-profile/${roomie.id}`}>View</Button>
                                         </ul>
                                         <ul>
                                             <Button variant="contained" color="error"> Delete </Button>

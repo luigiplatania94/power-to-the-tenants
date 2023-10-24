@@ -1,20 +1,49 @@
-.circle-container {
-  width: 400px; /* Set the width and height to create a circle */
-  height: 400px;
-  border-radius: 50%; /* Make it a circle by setting border-radius to 50% */
-  overflow: hidden; /* Ensure the image stays within the circle */
-  background-color: #f0f0f0; /* You can set a background color for the circle */
+
+.edit-button-image {
+  align-self: start;
+  right: 6.7rem;
 }
 
-.circle-container img {
+/* Apply the animation to the "Update" button when in editing mode */
+.button-image.animation {
+  animation: wiggle 0.5s infinite; /* Apply the animation */
+  animation-duration: 300ms;
+  animation-iteration-count:1;
+}
+
+.image-container {
+  position: relative;
   display: flex;
-  align-items: center;
   justify-content: center;
-  max-width: 100%;
-  max-height: 100%; /* Ensure the image fits within the circle */
-  border-radius: 50%; /* Clip the image to match the circle */
 }
 
+.center-image {
+  width: 300px; 
+  height: auto; 
+  border-radius: 30px;
+}
+
+
+
+@media (max-width: 425px) {
+  
+  .edit-button-image {
+    right: 4.6rem;
+  }
+
+  .center-image {
+    width: 60%;
+  }
+}
+
+/* Define a keyframes animation for wiggling */
+@keyframes wiggle {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(4deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-4deg); }
+  100% { transform: rotate(0deg); }
+}
 
   /* Color Theme Swatches in Hex */
   .Primary-Dark-Teal { background-color: #348888; }
