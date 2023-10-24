@@ -7,4 +7,5 @@ public interface IRoomieService
     IEnumerable<Roomie> GetAllRoomies();
     Roomie CreateRoomie(CreateRoomieModel model);
     void DeleteRoomie(Guid id);
+    Roomie UpdateRoomie(Roomie existingRoomie, UpdateRoomieModel model);
 }
