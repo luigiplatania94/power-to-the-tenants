@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {fetchAllRoomies} from '../../services/roomie-service';
+import {deleteRoomie, fetchAllRoomies} from '../../services/roomie-service';
 import {Roomie} from "../../models/roomie.ts";
 import './view-all-profiles.css';
 import {
@@ -30,7 +30,19 @@ function ViewAllProfiles() {
             });
     }, []);
 
-    
+    const handleDeleteClick = (id : string) : void => {
+        deleteRoomie(id).then(() : void => {
+            fetchAllRoomies()
+                .then((data) => {
+                    setRoomies(data);
+                })
+                .catch((error) => {
+                    console.error('Error fetching roomies:', error);
+                });
+            // TODO: prompt the user a dialog to confirm whether they really want to delete the profile.
+            //       redirect user to homepage
+        });
+    };
     
     return (
         <div className={"tableContainer"}>
@@ -46,7 +58,6 @@ function ViewAllProfiles() {
                             </TableRow>
                         </TableHead>
                         
-                        {/*takes the full page*/}
                         <TableBody>
                             {roomies.map((roomie) => (
                                 <TableRow
@@ -67,7 +78,7 @@ function ViewAllProfiles() {
                                             <Button variant="contained" href={`/view-profile/${roomie.id}`}>View</Button>
                                         </ul>
                                         <ul>
-                                            <Button variant="contained" color="error"> Delete </Button>
+                                            <Button variant="contained" color="error" onClick={() => handleDeleteClick(roomie.id)}> Delete </Button>
                                         </ul>
                                     </TableCell>
                                     

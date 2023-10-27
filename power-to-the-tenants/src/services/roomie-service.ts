@@ -29,6 +29,18 @@ export async function updateRoomieData(data: Roomie) {
     }
 }
 
+export async function deleteRoomie(id: string | undefined) {
+    try {
+        const response = await axios.delete(`http://localhost:5016/Roomie/${id}`);
+        return response.data;
+    }
+
+    catch (error) {
+        console.error('Error deleting roomie:', error);
+        throw error;
+    }
+}
+
 
 export const fetchAllRoomies = async (): Promise<Roomie[]> => {
     try {

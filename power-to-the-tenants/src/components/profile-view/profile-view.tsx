@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {fetchRoomie, updateRoomieData} from '../../services/roomie-service';
+import {deleteRoomie, fetchRoomie, updateRoomieData} from '../../services/roomie-service';
 import './profile-view.css';
 import {Button, Chip, Grid, TextField, useMediaQuery} from '@mui/material';
 import {Roomie} from "../../models/roomie.ts";
@@ -13,16 +13,23 @@ export function ProfileView() {
     const [isEditing, setIsEditing] = useState(false); // Track if editing is active
 
     const isSmallScreen = useMediaQuery('(max-width:600px)');
-    const handleEditClick = () => {
-        setIsEditing(!isEditing);
-    };
-    
     
     const { register, 
             handleSubmit,
             control,
             formState: { }
     } = useForm();
+    
+    const handleEditClick = () => {
+        setIsEditing(!isEditing);
+    };
+
+    const handleDeleteClick = () => {
+        deleteRoomie(id).then(() => {
+            // TODO: prompt the user a dialog to confirm whether they really want to delete the profile.
+            //       redirect user to homepage
+        });
+    };
     
     // fetch roomie data when the page loads for the first time
     useEffect(() => {
@@ -42,8 +49,9 @@ export function ProfileView() {
                 ...roomie,
             };
             updatedRoomie.attributes.splice(index, 1);
-            updateRoomieData(updatedRoomie);
-            setRoomie(updatedRoomie);
+            updateRoomieData(updatedRoomie).then(() => {
+                setRoomie(updatedRoomie);
+            })
         }
     }
     
@@ -55,7 +63,7 @@ export function ProfileView() {
                         <Button className={"edit-and-delete"} size={isSmallScreen ? "small" : "large"} variant="contained" color="secondary" onClick={handleEditClick}>
                             {isEditing ? 'Stop' : 'Edit'}
                         </Button>
-                        <Button className={"edit-and-delete"} size={isSmallScreen ? "small" : "large"} variant="contained" color="error">Delete</Button>
+                        <Button className={"edit-and-delete"} size={isSmallScreen ? "small" : "large"} variant="contained" color="error" onClick={handleDeleteClick}>Delete</Button>
                 </Grid>
                 
                 {/* Profile Image */}
@@ -69,8 +77,9 @@ export function ProfileView() {
                                         ...roomie,
                                         profileImage: data.imageLink,
                                     };
-                                    updateRoomieData(updatedRoomie);
-                                    setRoomie(updatedRoomie);
+                                    updateRoomieData(updatedRoomie).then(() => {
+                                      setRoomie(updatedRoomie);  
+                                    })
                                 }
                             })}>
                                 <TextField
@@ -159,8 +168,9 @@ export function ProfileView() {
                                     ...roomie, 
                                     attributes: [...roomie.attributes, data.attributeName],
                                 };
-                                updateRoomieData(updatedRoomie);
-                                setRoomie(updatedRoomie);
+                                updateRoomieData(updatedRoomie).then(() => {
+                                    setRoomie(updatedRoomie);
+                                })
                             }
                         })}>
                             <div>
