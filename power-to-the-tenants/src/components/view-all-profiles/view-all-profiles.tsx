@@ -59,7 +59,7 @@ function ViewAllProfiles() {
                                     <TableCell>{roomie.description}</TableCell>
                                     <TableCell>
                                         {roomie.attributes.map((attribute, index) => (
-                                            <Chip key = {index} label = {attribute}></Chip>
+                                            <Chip className={"attribute"} key = {index} label = {attribute}></Chip>
                                         ))}
                                     </TableCell>
                                     <TableCell>

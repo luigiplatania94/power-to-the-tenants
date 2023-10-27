@@ -17,6 +17,18 @@ export const fetchRoomie = async (id: string | undefined): Promise<Roomie> => {
     }
 }
 
+export async function updateRoomieData(data: Roomie) {
+    try {
+        const response = await axios.put(`http://localhost:5016/Roomie/${data.id}`, data);
+        return response.data;
+    }
+
+    catch (error) {
+        console.error('Error updating roomie:', error);
+        throw error;
+    }
+}
+
 
 export const fetchAllRoomies = async (): Promise<Roomie[]> => {
     try {

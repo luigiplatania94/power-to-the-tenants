@@ -1,11 +1,8 @@
-
-.edit-button-image {
-  align-self: start;
-  right: 6.7rem;
+.edit-and-delete {
+  top: 0.5rem;
 }
 
-/* Apply the animation to the "Update" button when in editing mode */
-.button-image.animation {
+.button-update.animation {
   animation: wiggle 0.5s infinite; /* Apply the animation */
   animation-duration: 300ms;
   animation-iteration-count:1;
@@ -23,16 +20,25 @@
   border-radius: 30px;
 }
 
+.description {
+  font-size: 18px;
+}
 
+.attribute {
+  margin : 0.3rem;  
+}
 
 @media (max-width: 425px) {
-  
   .edit-button-image {
     right: 4.6rem;
   }
-
+  
   .center-image {
     width: 60%;
+  }
+
+  .description {
+    font-size: 14px; 
   }
 }
 
@@ -45,10 +51,10 @@
   100% { transform: rotate(0deg); }
 }
 
-  /* Color Theme Swatches in Hex */
-  .Primary-Dark-Teal { background-color: #348888; }
-  .Primary-Teal { background-color: #22BABB; }
-  .Primary-Light-Teal { background-color: #9EF8EE; }
-  .Secondary-Orange { background-color: #FA7F08; }
-  .Secondary-Dark-Orange { background-color: #F24405; }
+/* Color Theme Swatches in Hex */
+.Primary-Dark-Teal { background-color: #348888; }
+.Primary-Teal { background-color: #22BABB; }
+.Primary-Light-Teal { background-color: #9EF8EE; }
+.Secondary-Orange { background-color: #FA7F08; }
+.Secondary-Dark-Orange { background-color: #F24405; }
   
