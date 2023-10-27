@@ -4,12 +4,11 @@ import './profile-view.css';
 import {Button, Chip, Grid, TextField, useMediaQuery} from '@mui/material';
 import {Roomie} from "../../models/roomie.ts";
 import {useParams} from "react-router-dom";
-import {useForm} from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 
 export function ProfileView() {
 
     const { id } = useParams();
-    
     const [roomie, setRoomie ] = useState<Roomie>();
     const [isEditing, setIsEditing] = useState(false); // Track if editing is active
 
@@ -17,14 +16,15 @@ export function ProfileView() {
     const handleEditClick = () => {
         setIsEditing(!isEditing);
     };
-
+    
+    
     const { register, 
             handleSubmit,
+            control,
             formState: { }
     } = useForm();
-
     
-    
+    // fetch roomie data when the page loads for the first time
     useEffect(() => {
         fetchRoomie(id).then(response => {
             // Assuming the API returns an object with a 'newValue' property
@@ -46,6 +46,7 @@ export function ProfileView() {
             setRoomie(updatedRoomie);
         }
     }
+    
     
     return (
             <Grid container spacing={4}>
@@ -77,7 +78,6 @@ export function ProfileView() {
                                     variant="outlined"
                                     label = "Image link"
                                     margin ="normal"
-                                    className={"button-update animation"}
                                     {...register("imageLink")}
                                 />
                                 <Button type="submit" size={isSmallScreen ? "small" : "large"} variant="contained" color="secondary" className="button-update animation">
@@ -90,9 +90,57 @@ export function ProfileView() {
                 
                 {/* Description */}
                 <Grid item lg={6} xs={12}>
-                    <p className={"description"}>{roomie && roomie.description}</p>
-                    {isEditing && (
-                        <Button size={isSmallScreen ? "small" : "large"} variant="contained" color="secondary" className ={"button-update animation"}>Submit</Button>
+                    {isEditing ? (
+                        <form onSubmit={handleSubmit((data ) => {
+                            if (roomie) {
+                                const updatedRoomie: Roomie = {
+                                    ...roomie,
+                                    description: data.editedDescription,
+                                };
+                                updateRoomieData(updatedRoomie)
+                                    .then(() => {
+                                        setRoomie(updatedRoomie);
+                                    })
+                                    .catch((error) => {
+                                        console.error('Error updating description:', error);
+                                    });
+                            }
+                        })}>
+                            <div>
+                                {/* Use Controller to integrate RHF with the description field */}
+                                <Controller
+                                    name="editedDescription"
+                                    control={control}
+                                    defaultValue={roomie?.description || ''}
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            multiline
+                                            fullWidth
+                                            id="standard-multiline-static"
+                                            label="Multiline"
+                                            minRows={3}
+                                            maxRows={10}
+                                            size={isSmallScreen ? 'small' : 'medium'}
+                                            variant="outlined"
+                                            margin="normal"
+                                            className={'input-description'}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <Button
+                                type="submit"
+                                size={isSmallScreen ? 'small' : 'large'}
+                                variant="contained"
+                                color="secondary"
+                                className={'button-update animation'}
+                            >
+                                Save
+                            </Button>
+                        </form>
+                    ) : (
+                        <p className={'description'}>{roomie?.description}</p>
                     )}
                 </Grid>
                 
@@ -121,7 +169,7 @@ export function ProfileView() {
                                     label="Attribute Name"
                                     margin ="normal"
                                     variant="outlined"
-                                    className={"input-attribute button-update animation"}
+                                    className={"input-attribute"}
                                     {...register("attributeName")}
                                 />
                             </div>
