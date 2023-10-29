@@ -8,6 +8,12 @@
     margin : 0.3rem;
 }
 
+.create-input {
+    width: auto;
+    max-width: 500px;
+    height: 400px;
+}
+
 /* Color Theme Swatches in Hex */
 .Primary-Dark-Teal { background-color: #348888; }
 .Primary-Teal { background-color: #22BABB; }

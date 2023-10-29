@@ -10,7 +10,7 @@ export function ProfileView() {
 
     const { id } = useParams();
     const [roomie, setRoomie ] = useState<Roomie>();
-    const [isEditing, setIsEditing] = useState(false); // Track if editing is active
+    const [isEditing, setIsEditing] = useState(false); 
 
     const isSmallScreen = useMediaQuery('(max-width:600px)');
     

@@ -28,6 +28,7 @@
   margin : 0.3rem;  
 }
 
+
 @media (max-width: 425px) {
   .edit-button-image {
     right: 4.6rem;

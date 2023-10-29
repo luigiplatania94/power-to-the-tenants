@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {deleteRoomie, fetchAllRoomies} from '../../services/roomie-service';
+import {createRoomie, deleteRoomie, fetchAllRoomies} from '../../services/roomie-service';
 import {Roomie} from "../../models/roomie.ts";
 import './view-all-profiles.css';
 import {
@@ -12,13 +12,15 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow, TextField
 } from "@mui/material";
+import {useForm} from "react-hook-form";
+import {createRoomieDTO} from "../../DTOs/createRoomieDTO.ts";
 
 
 function ViewAllProfiles() {
     const [roomies, setRoomies] = useState<Roomie[]>([]);
-
+    
     useEffect(() => {
         // Fetch roomies data when the component mounts
         fetchAllRoomies()
@@ -30,6 +32,11 @@ function ViewAllProfiles() {
             });
     }, []);
 
+    const { register,
+        handleSubmit,
+        formState: { }
+    } = useForm();
+    
     const handleDeleteClick = (id : string) : void => {
         deleteRoomie(id).then(() : void => {
             fetchAllRoomies()
@@ -88,6 +95,49 @@ function ViewAllProfiles() {
                     </Table>
                 </TableContainer>
             </Card>
+            <form onSubmit={handleSubmit((data ) => {
+                const createdRoomie: createRoomieDTO = {
+                    profileImage : data.profileLink,
+                    description : data.description,
+                    attributes : [data.attributes],
+                };
+
+                createRoomie(createdRoomie).then(() : void => {
+                    fetchAllRoomies()
+                        .then((data) => {
+                            setRoomies(data);
+                        })
+                        .catch((error) => {
+                            console.error('Error fetching roomies:', error);
+                        });
+                });
+            })}>
+                <div>
+                    <TextField
+                        label="Profile link"
+                        margin ="normal"
+                        variant="outlined"
+                        {...register("profileLink")}
+                    />
+                </div>
+                <div>
+                    <TextField
+                        label="Description"
+                        margin ="normal"
+                        variant="outlined"
+                        {...register("description")}
+                    />
+                </div>
+                <div>
+                    <TextField
+                        label="Attributes"
+                        margin ="normal"
+                        variant="outlined"
+                        {...register("attributes")}
+                    />
+                </div>
+                <Button type="submit" variant="contained" color="success"> Create </Button>
+            </form>
         </div>
     );
 }

@@ -1,5 +1,6 @@
 import { Roomie } from "../models/roomie";
 import axios from "axios";
+import {createRoomieDTO} from "../DTOs/createRoomieDTO.ts";
 
 
 
@@ -17,6 +18,17 @@ export const fetchRoomie = async (id: string | undefined): Promise<Roomie> => {
     }
 }
 
+export async function createRoomie(data: createRoomieDTO) {
+    try {
+        const response = await axios.post(`http://localhost:5016/Roomie`, data);
+        return response.data;
+    }
+
+    catch (error) {
+        console.error('Error creating roomie:', error);
+        throw error;
+    }
+}
 export async function updateRoomieData(data: Roomie) {
     try {
         const response = await axios.put(`http://localhost:5016/Roomie/${data.id}`, data);
@@ -28,6 +40,7 @@ export async function updateRoomieData(data: Roomie) {
         throw error;
     }
 }
+
 
 export async function deleteRoomie(id: string | undefined) {
     try {
