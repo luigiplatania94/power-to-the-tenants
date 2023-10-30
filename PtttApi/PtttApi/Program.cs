@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using PtttApi.Db;
 using PtttApi.Repositories;
 using PtttApi.Services;
 
@@ -24,6 +26,10 @@ builder.Services.AddCors(options =>
                 .AllowAnyHeader();
         });
 });
+
+
+builder.Services.AddDbContext<TenantContext>(options =>
+    options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=RoomieDB;Encrypt=False"));
 
 
 var app = builder.Build();
