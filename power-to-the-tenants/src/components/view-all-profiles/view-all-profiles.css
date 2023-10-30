@@ -1,23 +1,17 @@
-.roomie-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.roomie-table th, .roomie-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-.roomie-table th {
-    background-color: #f2f2f2;
-}
-
 .roomie-image {
     width: 100px; 
     height: 100px; 
     object-fit: cover;
+}
+
+.attribute {
+    margin : 0.3rem;
+}
+
+.create-input {
+    width: auto;
+    max-width: 500px;
+    height: 400px;
 }
 
 /* Color Theme Swatches in Hex */
