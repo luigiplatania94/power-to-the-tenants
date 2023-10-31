@@ -16,6 +16,6 @@ public class TenantContext : DbContext
     {
         modelBuilder.Entity<RoomieEntity>()
             .HasMany(r => r.Attributes)
-            .WithOne(); // No navigation property on AttributeEntit
+            .WithMany(); // No navigation property on AttributeEntity
     }
 }

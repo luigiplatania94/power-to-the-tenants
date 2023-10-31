@@ -13,15 +13,16 @@ public class RoomieService : IRoomieService
     }
 
 
-    public Roomie? GetRoomieById(Guid id)
+    public async Task<Roomie> GetRoomieById(Guid id)
     {
-        return _roomieRepository.GetRoomieById(id);
+        var roomieEntity = await _roomieRepository.GetRoomieById(id);
+        return new Roomie(roomieEntity);
     }
     
     public async Task<List<Roomie>> GetAllRoomies()
     {
         var roomieEntities = await _roomieRepository.GetAllRoomies();
-        return roomieEntities.Select(re => new Roomie(re)).ToList();
+        return roomieEntities.Select(re => new Roomie(re)).ToList(); // Use .Select to project and convert to Roomie objects
     }
     
     public void CreateRoomie(CreateRoomieModel model)

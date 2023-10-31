@@ -18,11 +18,10 @@ public class RoomieController : ControllerBase
 
 
     [HttpGet("{id}")]
-    public Results<Ok<Roomie>, NotFound> GetRoomieById(Guid id)
+    public async Task<IActionResult> GetRoomieById(Guid id)
     {
-        var roomie = _roomieService.GetRoomieById(id);
-
-        return roomie is null ? TypedResults.NotFound() : TypedResults.Ok(roomie);
+        var roomie = await _roomieService.GetRoomieById(id);
+        return roomie is null ? NotFound() : Ok(roomie);
     }
 
     [HttpGet("all")]
@@ -48,14 +47,15 @@ public class RoomieController : ControllerBase
     [HttpPut("{id}")]
     public ActionResult<Roomie> UpdateRoomie(Guid id, [FromBody] UpdateRoomieModel model)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        // if (!ModelState.IsValid) return BadRequest(ModelState);
+        //
+        // var existingRoomie = _roomieService.GetRoomieById(id);
+        // if (existingRoomie is null) return NotFound();
+        //
+        // existingRoomie = _roomieService.UpdateRoomie(existingRoomie, model);
         
-        var existingRoomie = _roomieService.GetRoomieById(id);
-        if (existingRoomie is null) return NotFound();
-
-        existingRoomie = _roomieService.UpdateRoomie(existingRoomie, model);
-        
-        return Ok(existingRoomie); // Return a 200 OK response if the update was successful
+        // return Ok(existingRoomie); // Return a 200 OK response if the update was successful
+        return Ok(); // Return a 200 OK response if the update was successful
     }
     
     [HttpDelete("{id}")]

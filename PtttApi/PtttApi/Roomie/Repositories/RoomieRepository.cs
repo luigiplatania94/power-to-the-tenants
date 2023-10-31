@@ -13,12 +13,11 @@ public class RoomieRepository : IRoomieRepository
         _tenantContext = tenantContext;
     }
 
-    public Roomie? GetRoomieById(Guid id)
-    {
-        return null;
-        //return roomies
-        //   .FirstOrDefault(r => r.Id == id); // LINQ first item in collection that matches this criteria or return null
-    }
+
+    public async Task<RoomieEntity> GetRoomieById(Guid id)
+        => await _tenantContext.Roomies
+            .Where(r => r.Id == id) 
+            .FirstOrDefaultAsync(); 
     
     public async Task<List<RoomieEntity>> GetAllRoomies() 
         => await _tenantContext.Roomies

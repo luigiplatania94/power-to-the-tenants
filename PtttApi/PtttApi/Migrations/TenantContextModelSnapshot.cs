@@ -39,7 +39,7 @@ namespace PtttApi.Migrations
 
                     b.HasIndex("RoomieEntityId");
 
-                    b.ToTable("AttributeEntity");
+                    b.ToTable("AttributeEntity", (string)null);
                 });
 
             modelBuilder.Entity("PtttApi.Db.Entities.RoomieEntity", b =>
@@ -58,7 +58,7 @@ namespace PtttApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roomies");
+                    b.ToTable("Roomies", (string)null);
                 });
 
             modelBuilder.Entity("PtttApi.Db.Entities.AttributeEntity", b =>
