@@ -5,14 +5,18 @@ using PtttApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+IConfigurationRoot configuration = new ConfigurationBuilder()
+    .AddUserSecrets<Program>()
+    .Build();
+
 // Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-builder.Services.AddSingleton<IRoomieRepository, RoomieRepository>();
+builder.Services.AddScoped<TenantContext>();
+builder.Services.AddScoped<IRoomieRepository, RoomieRepository>();
 builder.Services.AddTransient<IRoomieService, RoomieService>();
 
 // allows for anyone to ask for anything
@@ -29,7 +33,8 @@ builder.Services.AddCors(options =>
 
 
 builder.Services.AddDbContext<TenantContext>(options =>
-    options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=RoomieDB;Encrypt=False"));
+    options.UseSqlServer(configuration["ConnectionStrings:MyConnection"])
+    );
 
 
 var app = builder.Build();

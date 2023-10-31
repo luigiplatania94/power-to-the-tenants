@@ -26,22 +26,22 @@ public class RoomieController : ControllerBase
     }
 
     [HttpGet("all")]
-    public ActionResult<IEnumerable<Roomie>> GetAllRoomies()
+    public async Task<IActionResult> GetAllRoomies()
     {
-        var roomies = _roomieService.GetAllRoomies();
+        var roomies = await _roomieService.GetAllRoomies();
         return Ok(roomies);
     }
 
     
 
     [HttpPost]
-    public ActionResult<Roomie> CreateRoomie([FromBody] CreateRoomieModel model)
+    public ActionResult CreateRoomie([FromBody] CreateRoomieModel model)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         
-        var createdRoomie = _roomieService.CreateRoomie(model);
+        _roomieService.CreateRoomie(model);
         
-        return Ok(createdRoomie); // Return a 200 OK response if the post was successful
+        return Ok(); // Return a 200 OK response if the post was successful
     }
     
 

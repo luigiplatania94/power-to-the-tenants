@@ -1,3 +1,4 @@
+using PtttApi.Db.Entities;
 using PtttApi.Domain;
 namespace PtttApi.Repositories;
 
@@ -5,7 +6,7 @@ namespace PtttApi.Repositories;
 public interface IRoomieRepository
 {
     Roomie? GetRoomieById(Guid id);
-    IEnumerable<Roomie> GetAllRoomies();
-    void CreateRoomie(Roomie roomie);
+    Task<List<RoomieEntity>> GetAllRoomies();
+    void CreateRoomie(CreateRoomieModel roomie);
     void DeleteRoomie(Guid id);
 }

@@ -12,7 +12,7 @@ using PtttApi.Db;
 namespace PtttApi.Migrations
 {
     [DbContext(typeof(TenantContext))]
-    [Migration("20231030160150_Initial")]
+    [Migration("20231030205802_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

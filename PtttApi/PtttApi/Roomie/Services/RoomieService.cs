@@ -1,3 +1,4 @@
+using PtttApi.Db.Entities;
 using PtttApi.Domain;
 using PtttApi.Repositories;
 
@@ -17,26 +18,15 @@ public class RoomieService : IRoomieService
         return _roomieRepository.GetRoomieById(id);
     }
     
-    public IEnumerable<Roomie> GetAllRoomies()
+    public async Task<List<Roomie>> GetAllRoomies()
     {
-        return _roomieRepository.GetAllRoomies();
+        var roomieEntities = await _roomieRepository.GetAllRoomies();
+        return roomieEntities.Select(re => new Roomie(re)).ToList();
     }
     
-    public Roomie CreateRoomie(CreateRoomieModel model)
+    public void CreateRoomie(CreateRoomieModel model)
     {
-        // Business logic for creating a new Roomie instance
-        var newRoomie = new Roomie
-        {
-            Id = Guid.NewGuid(),  // Generate a new unique ID
-            ProfileImage = model.ProfileImage,
-            Description = model.Description,
-            Attributes = model.Attributes
-        };
-    
-        // Save the new Roomie to the repository
-        _roomieRepository.CreateRoomie(newRoomie);
-
-        return newRoomie;
+         _roomieRepository.CreateRoomie(model);
     }
     
     public void DeleteRoomie(Guid id)
