@@ -30,11 +30,10 @@ public class RoomieService : IRoomieService
          _roomieRepository.CreateRoomie(model);
     }
     
-    public void DeleteRoomie(Guid id)
+    public async Task DeleteRoomie(Guid id)
     {
-        _roomieRepository.DeleteRoomie(id);
+        await _roomieRepository.DeleteRoomie(id);
     }
-
     public Roomie UpdateRoomie(Roomie existingRoomie, UpdateRoomieModel model)
     {
         existingRoomie.ProfileImage = model.ProfileImage;

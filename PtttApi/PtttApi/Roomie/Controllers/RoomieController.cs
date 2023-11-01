@@ -59,14 +59,17 @@ public class RoomieController : ControllerBase
     }
     
     [HttpDelete("{id}")]
-    public IActionResult DeleteRoomie(Guid id)
+    public async Task<IActionResult> DeleteRoomie(Guid id)
     {
-        var existingRoomie = _roomieService.GetRoomieById(id);
-        if (existingRoomie is null) return NotFound();
+        var existingRoomie = await _roomieService.GetRoomieById(id);
 
-        _roomieService.DeleteRoomie(id);
-        
+        if (existingRoomie is null)
+            return NotFound();
+
+        await _roomieService.DeleteRoomie(id);
+
         return Ok();
     }
+
 }
 

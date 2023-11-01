@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using PtttApi.Db;
 using PtttApi.Db.Entities;
@@ -28,8 +29,15 @@ public class RoomieRepository : IRoomieRepository
         //roomies.Add(roomie);
     }
 
-    public void DeleteRoomie(Guid id)
+    public async Task DeleteRoomie(Guid id)
     {
-        //roomies.Remove(GetRoomieById(id));
+        var roomieToDelete = await GetRoomieById(id);
+
+        if (roomieToDelete != null)
+        {
+            _tenantContext.Roomies.Remove(roomieToDelete);
+            await _tenantContext.SaveChangesAsync();
+        }
     }
+
 }
