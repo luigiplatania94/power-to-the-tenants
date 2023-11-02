@@ -5,7 +5,7 @@ public interface IRoomieService
 {
     Task<Roomie> GetRoomieById(Guid id);
     Task<List<Roomie>> GetAllRoomies();
-    void CreateRoomie(CreateRoomieModel model);
+    Task<Roomie> CreateRoomie(CreateRoomieDTO dto);
     Task DeleteRoomie(Guid id);
-    Roomie UpdateRoomie(Roomie existingRoomie, UpdateRoomieModel model);
+    Task<Roomie> UpdateRoomie(Guid id, UpdateRoomieDTO dto);
 }

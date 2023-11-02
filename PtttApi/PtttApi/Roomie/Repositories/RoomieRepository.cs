@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using PtttApi.Db;
 using PtttApi.Db.Entities;
 using PtttApi.Domain;
+using PtttApi.Exceptions;
 
 namespace PtttApi.Repositories;
 
@@ -24,20 +24,48 @@ public class RoomieRepository : IRoomieRepository
         => await _tenantContext.Roomies
             .ToListAsync();
 
-    public void CreateRoomie(CreateRoomieModel roomie)
+    public async Task<RoomieEntity> CreateRoomie(CreateRoomieDTO roomie)
     {
-        //roomies.Add(roomie);
+        var newRoomie = new RoomieEntity
+        {
+            ProfileImage = roomie.ProfileImage,
+            Description = roomie.Description,
+
+            Attributes = roomie.Attributes.Select(attr => new AttributeEntity(attr.Id, attr.Name)).ToList()
+        };
+        
+        _tenantContext.Roomies.Add(newRoomie);
+        
+        await _tenantContext.SaveChangesAsync();
+
+        return newRoomie;
     }
 
+
+    public async Task<RoomieEntity> UpdateRoomie(Guid id, UpdateRoomieDTO dto)
+    {
+        var roomieToUpdate = await GetRoomieById(id);
+
+        if (roomieToUpdate == null) throw new RoomieNotFoundException();
+
+        roomieToUpdate.ProfileImage = dto.ProfileImage;
+        roomieToUpdate.Description = dto.Description;
+        
+        roomieToUpdate.Attributes =  dto.Attributes.Select(at => new AttributeEntity(at)).ToList(); 
+        
+        await _tenantContext.SaveChangesAsync();
+        
+        return roomieToUpdate;
+    }
+
+    
     public async Task DeleteRoomie(Guid id)
     {
         var roomieToDelete = await GetRoomieById(id);
 
-        if (roomieToDelete != null)
-        {
-            _tenantContext.Roomies.Remove(roomieToDelete);
-            await _tenantContext.SaveChangesAsync();
-        }
+        if (roomieToDelete == null) throw new RoomieNotFoundException();
+        
+        _tenantContext.Roomies.Remove(roomieToDelete);
+        await _tenantContext.SaveChangesAsync();
     }
-
 }

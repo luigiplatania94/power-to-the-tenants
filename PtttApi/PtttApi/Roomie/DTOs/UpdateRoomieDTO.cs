@@ -1,8 +1,8 @@
 namespace PtttApi.Domain;
 
-public class UpdateRoomieModel
+public class UpdateRoomieDTO
 {
     public string ProfileImage { get; set; }
     public string Description { get; set; }
-    public List<string> Attributes { get; set; }
+    public List<RoomieAttribute> Attributes { get; set; }
 }

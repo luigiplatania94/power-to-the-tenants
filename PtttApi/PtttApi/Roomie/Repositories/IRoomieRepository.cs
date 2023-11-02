@@ -7,6 +7,7 @@ public interface IRoomieRepository
 {
     Task<RoomieEntity> GetRoomieById(Guid id);
     Task<List<RoomieEntity>> GetAllRoomies();
-    void CreateRoomie(CreateRoomieModel roomie);
+    Task<RoomieEntity> CreateRoomie(CreateRoomieDTO roomie);
+    Task<RoomieEntity> UpdateRoomie(Guid id, UpdateRoomieDTO dto);
     Task DeleteRoomie(Guid id);
 }

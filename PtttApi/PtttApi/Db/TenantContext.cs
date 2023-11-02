@@ -15,7 +15,6 @@ public class TenantContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<RoomieEntity>()
-            .HasMany(r => r.Attributes)
-            .WithMany(); // No navigation property on AttributeEntity
+            .HasMany(r => r.Attributes); // No navigation property on AttributeEntity
     }
 }

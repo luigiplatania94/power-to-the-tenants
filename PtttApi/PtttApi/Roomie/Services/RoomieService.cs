@@ -1,4 +1,3 @@
-using PtttApi.Db.Entities;
 using PtttApi.Domain;
 using PtttApi.Repositories;
 
@@ -22,24 +21,24 @@ public class RoomieService : IRoomieService
     public async Task<List<Roomie>> GetAllRoomies()
     {
         var roomieEntities = await _roomieRepository.GetAllRoomies();
-        return roomieEntities.Select(re => new Roomie(re)).ToList(); // Use .Select to project and convert to Roomie objects
+        return roomieEntities.Select(re => new Roomie(re)).ToList();
     }
     
-    public void CreateRoomie(CreateRoomieModel model)
+    
+    public async Task<Roomie> CreateRoomie(CreateRoomieDTO dto)
     {
-         _roomieRepository.CreateRoomie(model);
+         var roomieEntity =  await _roomieRepository.CreateRoomie(dto);
+         return new Roomie(roomieEntity);
     }
     
     public async Task DeleteRoomie(Guid id)
     {
+        // TODO this should return a task?
         await _roomieRepository.DeleteRoomie(id);
     }
-    public Roomie UpdateRoomie(Roomie existingRoomie, UpdateRoomieModel model)
+    
+    public async Task<Roomie> UpdateRoomie(Guid id, UpdateRoomieDTO dto)
     {
-        existingRoomie.ProfileImage = model.ProfileImage;
-        existingRoomie.Description = model.Description;
-        existingRoomie.Attributes = model.Attributes;
-        
-        return existingRoomie;
+        return new Roomie(await _roomieRepository.UpdateRoomie(id, dto));
     }
 }
