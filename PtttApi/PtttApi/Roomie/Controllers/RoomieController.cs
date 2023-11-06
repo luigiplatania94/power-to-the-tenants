@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PtttApi.Domain;
+using PtttApi.Exceptions;
 using PtttApi.Services;
 
 namespace PtttApi.Controllers;
@@ -18,55 +19,58 @@ public class RoomieController : ControllerBase
 
 
     [HttpGet("{id}")]
-    public Results<Ok<Roomie>, NotFound> GetRoomieById(Guid id)
+    public async Task<IActionResult> GetRoomieById(Guid id)
     {
-        var roomie = _roomieService.GetRoomieById(id);
-
-        return roomie is null ? TypedResults.NotFound() : TypedResults.Ok(roomie);
+        var roomie = await _roomieService.GetRoomieById(id);
+        return roomie is null ? NotFound() : Ok(roomie);
     }
 
     [HttpGet("all")]
-    public ActionResult<IEnumerable<Roomie>> GetAllRoomies()
+    public async Task<IActionResult> GetAllRoomies()
     {
-        var roomies = _roomieService.GetAllRoomies();
+        var roomies = await _roomieService.GetAllRoomies();
         return Ok(roomies);
     }
 
     
 
     [HttpPost]
-    public ActionResult<Roomie> CreateRoomie([FromBody] CreateRoomieModel model)
+    public async Task<IActionResult> CreateRoomie([FromBody] CreateRoomieDTO dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         
-        var createdRoomie = _roomieService.CreateRoomie(model);
+        var createdRoomie = await _roomieService.CreateRoomie(dto);
         
         return Ok(createdRoomie); // Return a 200 OK response if the post was successful
     }
     
 
     [HttpPut("{id}")]
-    public ActionResult<Roomie> UpdateRoomie(Guid id, [FromBody] UpdateRoomieModel model)
+    public async Task<IActionResult> UpdateRoomie(Guid id, [FromBody] UpdateRoomieDTO dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        
-        var existingRoomie = _roomieService.GetRoomieById(id);
-        if (existingRoomie is null) return NotFound();
-
-        existingRoomie = _roomieService.UpdateRoomie(existingRoomie, model);
-        
-        return Ok(existingRoomie); // Return a 200 OK response if the update was successful
+        try
+        {
+            var updatedRoomie = await _roomieService.UpdateRoomie(id, dto);
+            return Ok(updatedRoomie);
+        }
+        catch (RoomieNotFoundException exception)
+        {
+            return NotFound();
+        }
     }
     
     [HttpDelete("{id}")]
-    public IActionResult DeleteRoomie(Guid id)
+    public async Task<IActionResult> DeleteRoomie(Guid id)
     {
-        var existingRoomie = _roomieService.GetRoomieById(id);
-        if (existingRoomie is null) return NotFound();
-
-        _roomieService.DeleteRoomie(id);
-        
-        return Ok();
+        try
+        {
+            await _roomieService.DeleteRoomie(id);
+            return Ok();
+        }
+        catch (RoomieNotFoundException exception)
+        {
+            return NotFound();
+        }
     }
 }
 

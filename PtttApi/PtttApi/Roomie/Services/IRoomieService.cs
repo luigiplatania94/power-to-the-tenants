@@ -3,9 +3,9 @@ namespace PtttApi.Services;
 
 public interface IRoomieService
 {
-    Roomie? GetRoomieById(Guid id);
-    IEnumerable<Roomie> GetAllRoomies();
-    Roomie CreateRoomie(CreateRoomieModel model);
-    void DeleteRoomie(Guid id);
-    Roomie UpdateRoomie(Roomie existingRoomie, UpdateRoomieModel model);
+    Task<Roomie> GetRoomieById(Guid id);
+    Task<List<Roomie>> GetAllRoomies();
+    Task<Roomie> CreateRoomie(CreateRoomieDTO dto);
+    Task DeleteRoomie(Guid id);
+    Task<Roomie> UpdateRoomie(Guid id, UpdateRoomieDTO dto);
 }

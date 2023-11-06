@@ -1,7 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using PtttApi.Db;
 using PtttApi.Repositories;
 using PtttApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+IConfigurationRoot configuration = new ConfigurationBuilder()
+    .AddUserSecrets<Program>()
+    .Build();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -9,8 +15,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-builder.Services.AddSingleton<IRoomieRepository, RoomieRepository>();
+builder.Services.AddScoped<TenantContext>();
+builder.Services.AddScoped<IRoomieRepository, RoomieRepository>();
 builder.Services.AddTransient<IRoomieService, RoomieService>();
 
 // allows for anyone to ask for anything
@@ -24,6 +30,11 @@ builder.Services.AddCors(options =>
                 .AllowAnyHeader();
         });
 });
+
+
+builder.Services.AddDbContext<TenantContext>(options =>
+    options.UseSqlServer(configuration["ConnectionStrings:MyConnection"])
+    );
 
 
 var app = builder.Build();
