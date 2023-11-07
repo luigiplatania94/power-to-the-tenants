@@ -3,7 +3,7 @@ import {deleteRoomie, fetchRoomie, updateRoomieData} from '../../services/roomie
 import './profile-view.css';
 import {Alert, AlertColor, Button, Chip, Grid, Snackbar, TextField, useMediaQuery} from '@mui/material';
 import {Roomie} from "../../models/roomie.ts";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {Controller, useForm} from "react-hook-form";
 
 export function ProfileView() {
@@ -212,14 +212,19 @@ export function ProfileView() {
 
                 </Grid>
 
-                {/* Edit and Delete Buttons */}
+                {/* Edit, Delete and Back Buttons */}
                 <Grid item lg={12} xs={12}>
-                        <Button className={"edit-and-delete"} size={isSmallScreen ? "small" : "large"} variant="contained" color="success" onClick={handleEditClick}>
+                        <Button style={{ marginRight: '10px' }} size={isSmallScreen ? "small" : "large"} variant="contained" color="success" onClick={handleEditClick}>
                             {isEditing ? 'Stop' : 'Edit'}
                         </Button>
-                        <Button className={"edit-and-delete"} size={isSmallScreen ? "small" : "large"} variant="contained" color="error" onClick={handleDeleteClick}>
+                        <Button style={{ marginRight: '10px' }} size={isSmallScreen ? "small" : "large"} variant="contained" color="error" onClick={handleDeleteClick}>
                             Delete
                         </Button>
+                        <Link to="/">
+                            <Button size={isSmallScreen ? "small" : "large"} variant="contained">
+                                Back
+                            </Button>
+                        </Link>
                 </Grid>
                 
                 {/*Snackbar component*/}

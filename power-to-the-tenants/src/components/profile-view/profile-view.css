@@ -2,17 +2,11 @@ body {
   background-image: linear-gradient(to left top, #22babb, #4cc9c7, #6bd9d4, #85e8e1, #9ef8ee);
 }
 
-
-.edit-and-delete {
-  top: 0.5rem;
-}
-
 .button-update.animation {
   animation: wiggleAnimation 0.5s infinite; 
   animation-duration: 300ms;
   animation-iteration-count:1;
 }
-
 
 .profile-image {
   width: 200px; 
@@ -28,12 +22,8 @@ body {
   margin : 0.3rem;  
 }
 
-
+/*TODO use mui breakpoints*/
 @media (max-width: 425px) {
-  .edit-button-image {
-    right: 4.6rem;
-  }
-  
   .profile-image {
     width: 60%;
   }
