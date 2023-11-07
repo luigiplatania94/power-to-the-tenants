@@ -48,13 +48,13 @@ export function ProfileView() {
             const updatedRoomie: Roomie = {
                 ...roomie,
             };
-            updatedRoomie.attributes.splice(index, 1);
-            updateRoomieData(updatedRoomie).then(() => {
-                setRoomie(updatedRoomie);
-            })
-            .catch(error => {
-                console.error("Error deleting roomie's attribute:", error);
-            });
+            if (updatedRoomie.attributes != null)
+            {
+                updatedRoomie.attributes.splice(index, 1);
+                updateRoomieData(updatedRoomie).then(() => {
+                    setRoomie(updatedRoomie);
+                })
+            }
         }
     }
     
@@ -158,13 +158,13 @@ export function ProfileView() {
                 <Grid item lg={12} xs={12}>
                         <div>
                             {roomie?.attributes && roomie.attributes.map((attribute, index) => (
-                                <Chip className={"attribute"}  key = {index} label = {attribute} onDelete={isEditing ? () => handleDeleteAttribute(index) : undefined} size={isSmallScreen ? "small" : "medium"}></Chip>
+                                <Chip className={"attribute"}  key = {index} label = {attribute.name} onDelete={isEditing ? () => handleDeleteAttribute(index) : undefined} size={isSmallScreen ? "small" : "medium"}></Chip>
                             ))}
                         </div>
                         
                         {isEditing && (
                         <form onSubmit={handleSubmit((data ) => {
-                            if (roomie) {
+                            if (roomie && roomie.attributes != null) {
                                 const updatedRoomie: Roomie = {
                                     ...roomie, 
                                     attributes: [...roomie.attributes, data.attributeName],
