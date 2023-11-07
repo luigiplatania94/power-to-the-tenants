@@ -116,7 +116,7 @@ function ViewAllProfiles() {
             })}>
                 <div>
                     <TextField
-                        label="Profile link"
+                        label="Profile Image Link"
                         margin ="normal"
                         variant="outlined"
                         {...register("profileLink")}

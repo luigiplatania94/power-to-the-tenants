@@ -1,17 +1,23 @@
-import {useEffect, useState} from 'react';
+import {SetStateAction, useEffect, useState} from 'react';
 import {deleteRoomie, fetchRoomie, updateRoomieData} from '../../services/roomie-service';
 import './profile-view.css';
-import {Button, Chip, Grid, TextField, useMediaQuery} from '@mui/material';
+import {Alert, AlertColor, Button, Chip, Grid, Snackbar, TextField, useMediaQuery} from '@mui/material';
 import {Roomie} from "../../models/roomie.ts";
 import {useParams} from "react-router-dom";
 import {Controller, useForm} from "react-hook-form";
 
 export function ProfileView() {
 
-    const { id } = useParams();
-    const [roomie, setRoomie ] = useState<Roomie>();
-    const [isEditing, setIsEditing] = useState(false); 
+    const {id} = useParams();
+    const [roomie, setRoomie] = useState<Roomie>();
+    
+    const [isEditing, setIsEditing] = useState(false);
+    
+    const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor | undefined>('success');
 
+    
     const isSmallScreen = useMediaQuery('(max-width:600px)');
     
     const { register, 
@@ -22,6 +28,11 @@ export function ProfileView() {
     
     const handleEditClick = () => {
         setIsEditing(!isEditing);
+    };
+    const openSnackbar = (message: SetStateAction<string>, severity: AlertColor) => {
+        setSnackbarMessage(message);
+        setSnackbarSeverity(severity);
+        setIsSnackbarOpen(true);
     };
 
     const handleDeleteClick = () => {
@@ -73,10 +84,12 @@ export function ProfileView() {
                                         profileImage: data.imageLink,
                                     };
                                     updateRoomieData(updatedRoomie).then(() => {
-                                      setRoomie(updatedRoomie);  
+                                      setRoomie(updatedRoomie);
+                                      openSnackbar("Profile image updated succesfully", "success");
                                     })
                                     .catch(error => {
                                         console.error("Error updating roomie's profile link:", error);
+                                        openSnackbar("Profile image failed to update", "error");
                                     });
                                 }
                             })}>
@@ -110,9 +123,11 @@ export function ProfileView() {
                                 updateRoomieData(updatedRoomie)
                                     .then(() => {
                                         setRoomie(updatedRoomie);
+                                        openSnackbar("Description updated succesfully", "success");
                                     })
                                     .catch((error) => {
                                         console.error("Error updating roomie's description:", error);
+                                        openSnackbar("Description failed to update", "error");
                                     });
                             }
                         })}>
@@ -171,9 +186,11 @@ export function ProfileView() {
                                 };
                                 updateRoomieData(updatedRoomie).then(() => {
                                     setRoomie(updatedRoomie);
+                                    openSnackbar("Attributes updated succesfully", "success");
                                 })
                                 .catch(error => {
                                     console.error("Error adding new roomie's attribute name:", error);
+                                    openSnackbar("Attributes failed to update", "error");
                                 });
                             }
                         })}>
@@ -200,8 +217,27 @@ export function ProfileView() {
                         <Button className={"edit-and-delete"} size={isSmallScreen ? "small" : "large"} variant="contained" color="success" onClick={handleEditClick}>
                             {isEditing ? 'Stop' : 'Edit'}
                         </Button>
-                        <Button className={"edit-and-delete"} size={isSmallScreen ? "small" : "large"} variant="contained" color="error" onClick={handleDeleteClick}>Delete</Button>
+                        <Button className={"edit-and-delete"} size={isSmallScreen ? "small" : "large"} variant="contained" color="error" onClick={handleDeleteClick}>
+                            Delete
+                        </Button>
                 </Grid>
+                
+                {/*Snackbar component*/}
+                <Snackbar
+                    open={isSnackbarOpen}
+                    autoHideDuration={4000} 
+                    onClose={() => setIsSnackbarOpen(false)}
+                >
+                    <Alert
+                        elevation={6}
+                        variant="filled"
+                        onClose={() => setIsSnackbarOpen(false)}
+                        severity={snackbarSeverity}
+                    >
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
+
             </Grid>
     )
 }
