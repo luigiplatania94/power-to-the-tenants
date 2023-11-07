@@ -18,6 +18,20 @@ export const fetchRoomie = async (id: string | undefined): Promise<Roomie> => {
     }
 }
 
+export const fetchAllRoomies = async (): Promise<Roomie[]> => {
+    try {
+        const response = await axios({
+            method: 'get',
+            url: `http://localhost:5016/Roomie/all`,
+        });
+        return response.data;
+    }
+    catch (error) {
+        console.error('Error fetching roomies:', error);
+        throw error;
+    }
+}
+
 export async function createRoomie(data: createRoomieDTO) {
     try {
         const response = await axios.post(`http://localhost:5016/Roomie`, data);
@@ -29,8 +43,10 @@ export async function createRoomie(data: createRoomieDTO) {
         throw error;
     }
 }
+
 export async function updateRoomieData(data: Roomie) {
     try {
+        if (data.attributes == null) data.attributes = [];
         const response = await axios.put(`http://localhost:5016/Roomie/${data.id}`, data);
         return response.data;
     }
@@ -40,7 +56,6 @@ export async function updateRoomieData(data: Roomie) {
         throw error;
     }
 }
-
 
 export async function deleteRoomie(id: string | undefined) {
     try {
@@ -55,16 +70,3 @@ export async function deleteRoomie(id: string | undefined) {
 }
 
 
-export const fetchAllRoomies = async (): Promise<Roomie[]> => {
-    try {
-        const response = await axios({
-            method: 'get',
-            url: `http://localhost:5016/Roomie/all`,
-        });
-        return response.data;
-    }
-    catch (error) {
-        console.error('Error fetching roomies:', error);
-        throw error;
-    }
-}

@@ -77,7 +77,7 @@ function ViewAllProfiles() {
                                     <TableCell>{roomie.description}</TableCell>
                                     <TableCell>
                                         {roomie.attributes && roomie.attributes.map((attribute, index) => (
-                                            <Chip className={"attribute"} key = {index} label = {attribute}></Chip>
+                                            <Chip className={"attribute"} key = {index} label = {attribute.name}></Chip>
                                         ))}
                                     </TableCell>
                                     <TableCell>
@@ -96,10 +96,12 @@ function ViewAllProfiles() {
                 </TableContainer>
             </Card>
             <form onSubmit={handleSubmit((data ) => {
+                
                 const createdRoomie: createRoomieDTO = {
                     profileImage : data.profileLink,
                     description : data.description,
-                    attributes : [data.attributes],
+                    // TODO pass actual data.attributes
+                    attributes : [],
                 };
 
                 createRoomie(createdRoomie).then(() : void => {
