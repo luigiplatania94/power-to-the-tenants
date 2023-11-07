@@ -76,7 +76,7 @@ function ViewAllProfiles() {
                                     </TableCell>
                                     <TableCell>{roomie.description}</TableCell>
                                     <TableCell>
-                                        {roomie.attributes.map((attribute, index) => (
+                                        {roomie.attributes && roomie.attributes.map((attribute, index) => (
                                             <Chip className={"attribute"} key = {index} label = {attribute}></Chip>
                                         ))}
                                     </TableCell>
