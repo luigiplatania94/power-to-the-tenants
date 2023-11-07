@@ -57,19 +57,11 @@ export function ProfileView() {
     
     
     return (
-            <Grid container spacing={4}>
-                {/* Edit and Delete Buttons */}
-                <Grid item lg={12} xs={12}>
-                        <Button className={"edit-and-delete"} size={isSmallScreen ? "small" : "large"} variant="contained" color="secondary" onClick={handleEditClick}>
-                            {isEditing ? 'Stop' : 'Edit'}
-                        </Button>
-                        <Button className={"edit-and-delete"} size={isSmallScreen ? "small" : "large"} variant="contained" color="error" onClick={handleDeleteClick}>Delete</Button>
-                </Grid>
+            <Grid container rowSpacing={{ xs: 2, sm: 3, md: 3, lg: 7 }}>
                 
                 {/* Profile Image */}
-                <Grid item lg={4} xs={12 }>
-                    <div className={"image-container"}>
-                        <img className={"center-image"} src={roomie && roomie.profileImage} alt="" />
+                <Grid item lg={12} xs={12 }>
+                        <img className={"profile-image"} src={roomie && roomie.profileImage} alt="" />
                         {isEditing && (
                             <form onSubmit={handleSubmit((data ) => {
                                 if (roomie) {
@@ -82,23 +74,26 @@ export function ProfileView() {
                                     })
                                 }
                             })}>
-                                <TextField
-                                    size={isSmallScreen ? "small" : "medium"}
-                                    variant="outlined"
-                                    label = "Image link"
-                                    margin ="normal"
-                                    {...register("imageLink")}
-                                />
-                                <Button type="submit" size={isSmallScreen ? "small" : "large"} variant="contained" color="secondary" className="button-update animation">
-                                    Update
-                                </Button>
+                                <div>
+                                    <TextField
+                                        size={isSmallScreen ? "small" : "medium"}
+                                        variant="outlined"
+                                        label = "Image link"
+                                        margin ="normal"
+                                        {...register("imageLink")}
+                                    />
+                                </div>
+                                <div>
+                                    <Button type="submit" size={isSmallScreen ? "small" : "large"} variant="contained" color="success" className="button-update animation">
+                                        Update
+                                    </Button>
+                                </div>
                             </form>
                         )}
-                    </div>
                 </Grid>
                 
                 {/* Description */}
-                <Grid item lg={6} xs={12}>
+                <Grid item lg={12} xs={12}>
                     {isEditing ? (
                         <form onSubmit={handleSubmit((data ) => {
                             if (roomie) {
@@ -142,7 +137,7 @@ export function ProfileView() {
                                 type="submit"
                                 size={isSmallScreen ? 'small' : 'large'}
                                 variant="contained"
-                                color="secondary"
+                                color="success"
                                 className={'button-update animation'}
                             >
                                 Save
@@ -156,7 +151,7 @@ export function ProfileView() {
                 {/* Attributes */}
                 <Grid item lg={12} xs={12}>
                         <div>
-                            {roomie && roomie.attributes.map((attribute, index) => (
+                            {roomie?.attributes && roomie.attributes.map((attribute, index) => (
                                 <Chip className={"attribute"}  key = {index} label = {attribute} onDelete={isEditing ? () => handleDeleteAttribute(index) : undefined} size={isSmallScreen ? "small" : "medium"}></Chip>
                             ))}
                         </div>
@@ -184,11 +179,19 @@ export function ProfileView() {
                                 />
                             </div>
                             <div>
-                                <Button type="submit" size={isSmallScreen ? "small" : "large"} variant="contained" color="secondary" className ={"button-attribute button-update animation"}>Add</Button>
+                                <Button type="submit" size={isSmallScreen ? "small" : "large"} variant="contained" color="success" className ={"button-attribute button-update animation"}>Add</Button>
                             </div>
                         </form>
                         )}
 
+                </Grid>
+
+                {/* Edit and Delete Buttons */}
+                <Grid item lg={12} xs={12}>
+                        <Button className={"edit-and-delete"} size={isSmallScreen ? "small" : "large"} variant="contained" color="success" onClick={handleEditClick}>
+                            {isEditing ? 'Stop' : 'Edit'}
+                        </Button>
+                        <Button className={"edit-and-delete"} size={isSmallScreen ? "small" : "large"} variant="contained" color="error" onClick={handleDeleteClick}>Delete</Button>
                 </Grid>
             </Grid>
     )

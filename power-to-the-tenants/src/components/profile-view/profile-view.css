@@ -1,21 +1,21 @@
+body {
+  background-image: linear-gradient(to left top, #22babb, #4cc9c7, #6bd9d4, #85e8e1, #9ef8ee);
+}
+
+
 .edit-and-delete {
   top: 0.5rem;
 }
 
 .button-update.animation {
-  animation: wiggle 0.5s infinite; /* Apply the animation */
+  animation: wiggleAnimation 0.5s infinite; 
   animation-duration: 300ms;
   animation-iteration-count:1;
 }
 
-.image-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-}
 
-.center-image {
-  width: 300px; 
+.profile-image {
+  width: 200px; 
   height: auto; 
   border-radius: 30px;
 }
@@ -34,7 +34,7 @@
     right: 4.6rem;
   }
   
-  .center-image {
+  .profile-image {
     width: 60%;
   }
 
@@ -43,14 +43,15 @@
   }
 }
 
-/* Define a keyframes animation for wiggling */
-@keyframes wiggle {
+
+@keyframes wiggleAnimation {
   0% { transform: rotate(0deg); }
   25% { transform: rotate(4deg); }
   50% { transform: rotate(0deg); }
   75% { transform: rotate(-4deg); }
   100% { transform: rotate(0deg); }
 }
+
 
 /* Color Theme Swatches in Hex */
 .Primary-Dark-Teal { background-color: #348888; }
