@@ -1,7 +1,18 @@
 import {SetStateAction, useEffect, useState} from 'react';
 import {deleteRoomie, fetchRoomie, updateRoomieData} from '../../services/roomie-service';
 import './profile-view.css';
-import {Alert, AlertColor, Button, Chip, Grid, Snackbar, TextField, useMediaQuery} from '@mui/material';
+import {
+    Alert,
+    AlertColor,
+    Button,
+    Chip,
+    Dialog, DialogActions, DialogContent,
+    DialogTitle,
+    Grid,
+    Snackbar,
+    TextField,
+    useMediaQuery
+} from '@mui/material';
 import {Roomie} from "../../models/roomie.ts";
 import {Link, useParams} from "react-router-dom";
 import {Controller, useForm} from "react-hook-form";
@@ -16,7 +27,8 @@ export function ProfileView() {
     const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor | undefined>('success');
-
+    
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     
     const isSmallScreen = useMediaQuery('(max-width:600px)');
     
@@ -36,10 +48,7 @@ export function ProfileView() {
     };
 
     const handleDeleteClick = () => {
-        deleteRoomie(id).then(() => {
-            // TODO: prompt the user a dialog to confirm whether they really want to delete the profile.
-            //       redirect user to homepage
-        });
+        setIsDeleteDialogOpen(true);
     };
     
     // fetch roomie data when the page loads for the first time
@@ -243,6 +252,31 @@ export function ProfileView() {
                     </Alert>
                 </Snackbar>
 
+                {/*Dialog for deleting profile*/}
+                <Dialog open = {isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
+                    <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
+                    <DialogContent>
+                        <p>Are you sure you want to delete your profile?</p>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setIsDeleteDialogOpen(false)} color="primary">
+                            Cancel
+                        </Button>
+                        <Link to="/">
+                            <Button
+                                onClick={() => {
+                                    setIsDeleteDialogOpen(false);
+                                    deleteRoomie(id).then(() => {
+                                    });
+                                }}
+                                color="error"
+                            >
+                                Delete
+                            </Button>
+                        </Link>
+                    </DialogActions>
+                </Dialog>
+                
             </Grid>
     )
 }
