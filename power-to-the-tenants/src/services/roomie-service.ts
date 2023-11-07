@@ -6,10 +6,7 @@ import {createRoomieDTO} from "../DTOs/createRoomieDTO.ts";
 
 export const fetchRoomie = async (id: string | undefined): Promise<Roomie> => {
     try {
-        const response = await axios({
-            method: 'get',
-            url: `http://localhost:5016/Roomie/${id}`,
-        });
+        const response = await axios.get(`http://localhost:5016/Roomie/${id}`);
         return response.data;
     } 
     catch (error) {
@@ -68,5 +65,3 @@ export async function deleteRoomie(id: string | undefined) {
         throw error;
     }
 }
-
-

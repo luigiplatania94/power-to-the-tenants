@@ -38,7 +38,7 @@ export function ProfileView() {
             setRoomie(response);
         })
             .catch(error => {
-                console.error("Error fetching counter value:", error);
+                console.error("Error fetching roomie:", error);
             });
     }, []);
 
@@ -75,6 +75,9 @@ export function ProfileView() {
                                     updateRoomieData(updatedRoomie).then(() => {
                                       setRoomie(updatedRoomie);  
                                     })
+                                    .catch(error => {
+                                        console.error("Error updating roomie's profile link:", error);
+                                    });
                                 }
                             })}>
                                 <div>
@@ -109,7 +112,7 @@ export function ProfileView() {
                                         setRoomie(updatedRoomie);
                                     })
                                     .catch((error) => {
-                                        console.error('Error updating description:', error);
+                                        console.error("Error updating roomie's description:", error);
                                     });
                             }
                         })}>
@@ -169,6 +172,9 @@ export function ProfileView() {
                                 updateRoomieData(updatedRoomie).then(() => {
                                     setRoomie(updatedRoomie);
                                 })
+                                .catch(error => {
+                                    console.error("Error adding new roomie's attribute name:", error);
+                                });
                             }
                         })}>
                             <div>
