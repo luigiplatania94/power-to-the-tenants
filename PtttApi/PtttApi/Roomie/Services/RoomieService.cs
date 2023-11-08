@@ -15,6 +15,8 @@ public class RoomieService : IRoomieService
     public async Task<Roomie> GetRoomieById(Guid id)
     {
         var roomieEntity = await _roomieRepository.GetRoomieById(id);
+        if (roomieEntity == null) return new Roomie(null);
+        
         return new Roomie(roomieEntity);
     }
     
