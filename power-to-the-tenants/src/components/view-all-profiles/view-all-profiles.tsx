@@ -21,16 +21,20 @@ import {createRoomieDTO} from "../../DTOs/createRoomieDTO.ts";
 function ViewAllProfiles() {
     
     const [roomies, setRoomies] = useState<Roomie[]>([]);
-
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [deletingRoomieId, setDeletingRoomieId] = useState<string | null>(null);
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
-
-
-    const openDeleteDialog = (roomieId: string | null) => {
-        setIsDeleteDialogOpen(true);
-        setDeletingRoomieId(roomieId);
-    };
+    const [createForm, setCreateForm] = useState<createRoomieDTO>({
+        profileImage: '',
+        description: '',
+        attributes: [],
+    });
+    
+    const { 
+        
+        formState: { }
+    } = useForm();
 
     useEffect(() => {
         // Fetch roomies data when the component mounts
@@ -42,11 +46,20 @@ function ViewAllProfiles() {
                 console.error('Error fetching roomies:', error);
             });
     }, []);
-
-    const { register,
-        handleSubmit,
-        formState: { }
-    } = useForm();
+    
+    const openDeleteDialog = (roomieId: string | null) => {
+        setIsDeleteDialogOpen(true);
+        setDeletingRoomieId(roomieId);
+    };
+    
+    const openCreateDialog = () => {
+        setIsCreateDialogOpen(true);
+    };
+    
+    const closeCreateDialog = () => {
+        setIsCreateDialogOpen(false);
+    };
+    
 
     const handleDeleteClick = (id: string | null): void => {
         if (id !== null) {
@@ -65,6 +78,23 @@ function ViewAllProfiles() {
                     });
             });
         }
+    };
+
+
+    const handleCreateRoomie = () => {
+        createRoomie(createForm).then(() => {
+            // Refresh the list of roomies
+            fetchAllRoomies()
+                .then((data) => {
+                    setRoomies(data);
+                })
+                .catch((error) => {
+                    console.error('Error fetching roomies:', error);
+                });
+
+            // Close the create dialog
+            closeCreateDialog();
+        });
     };
 
     
@@ -110,51 +140,63 @@ function ViewAllProfiles() {
                     </Table>
                 </TableContainer>
             </Card>
-            <form onSubmit={handleSubmit((data ) => {
-                
-                const createdRoomie: createRoomieDTO = {
-                    profileImage : data.profileLink,
-                    description : data.description,
-                    // TODO pass actual data.attributes
-                    attributes : [],
-                };
 
-                createRoomie(createdRoomie).then(() : void => {
-                    fetchAllRoomies()
-                        .then((data) => {
-                            setRoomies(data);
-                        })
-                        .catch((error) => {
-                            console.error('Error fetching roomies:', error);
-                        });
-                });
-            })}>
-                <div>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '25px' }}>
+                <Button variant="contained" color="success" onClick={openCreateDialog}>
+                    Create
+                </Button>
+            </div>
+
+            {/*Dialog for creating a new roomie profile*/}
+            <Dialog open={isCreateDialogOpen} onClose={closeCreateDialog} maxWidth="sm">
+                <DialogTitle>Create Roomie Profile</DialogTitle>
+                <DialogContent>
                     <TextField
                         label="Profile Image Link"
-                        margin ="normal"
+                        margin="normal"
                         variant="outlined"
-                        {...register("profileLink")}
+                        fullWidth
+                        value={createForm.profileImage}
+                        onChange={(e) =>
+                            setCreateForm({ ...createForm, profileImage: e.target.value })
+                        }
                     />
-                </div>
-                <div>
                     <TextField
                         label="Description"
-                        margin ="normal"
+                        margin="normal"
                         variant="outlined"
-                        {...register("description")}
+                        fullWidth
+                        value={createForm.description}
+                        onChange={(e) =>
+                            setCreateForm({ ...createForm, description: e.target.value })
+                        }
                     />
-                </div>
-                <div>
                     <TextField
                         label="Attributes"
-                        margin ="normal"
+                        margin="normal"
                         variant="outlined"
-                        {...register("attributes")}
+                        fullWidth
+                        value={createForm.attributes.join(', ')}
+                        // TODO fix attributes
+                        // onChange={(e) =>
+                        //     setCreateForm({
+                        //         ...createForm,
+                        //         attributes: e.target.value
+                        //             .split(',')
+                        //             .map((attribute) => attribute.trim()),
+                        //     })
+                        // }
                     />
-                </div>
-                <Button type="submit" variant="contained" color="success"> Create </Button>
-            </form>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeCreateDialog}>Cancel</Button>
+                    <Button onClick={handleCreateRoomie} color="success">
+                        Create
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            
+            {/*Dialog for deleting a roomie profile*/}
             <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
                 <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
                 <DialogContent>
@@ -177,9 +219,6 @@ function ViewAllProfiles() {
                 </DialogActions>
             </Dialog>
         </div>
-
-
-
 );
 }
 

@@ -1,7 +1,3 @@
-body {
-  background: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12);
-}
-
 .button-update.animation {
   animation: wiggleAnimation 0.5s infinite; 
   animation-duration: 300ms;
