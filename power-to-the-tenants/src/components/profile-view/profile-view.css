@@ -1,10 +1,5 @@
 body {
-  background-image: linear-gradient(to left top, #22babb, #4cc9c7, #6bd9d4, #85e8e1, #9ef8ee);
-}
-
-
-.edit-and-delete {
-  top: 0.5rem;
+  background: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12);
 }
 
 .button-update.animation {
@@ -13,8 +8,8 @@ body {
   animation-iteration-count:1;
 }
 
-
 .profile-image {
+  margin-top: 1rem;
   width: 200px; 
   height: auto; 
   border-radius: 30px;
@@ -28,12 +23,8 @@ body {
   margin : 0.3rem;  
 }
 
-
+/*TODO use mui breakpoints*/
 @media (max-width: 425px) {
-  .edit-button-image {
-    right: 4.6rem;
-  }
-  
   .profile-image {
     width: 60%;
   }
@@ -53,10 +44,4 @@ body {
 }
 
 
-/* Color Theme Swatches in Hex */
-.Primary-Dark-Teal { background-color: #348888; }
-.Primary-Teal { background-color: #22BABB; }
-.Primary-Light-Teal { background-color: #9EF8EE; }
-.Secondary-Orange { background-color: #FA7F08; }
-.Secondary-Dark-Orange { background-color: #F24405; }
-  
+

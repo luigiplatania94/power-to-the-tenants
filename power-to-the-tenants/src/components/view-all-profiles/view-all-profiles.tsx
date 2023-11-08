@@ -5,7 +5,7 @@ import './view-all-profiles.css';
 import {
     Button,
     Card,
-    Chip,
+    Chip, Dialog, DialogActions, DialogContent, DialogTitle,
     Paper,
     Table,
     TableBody,
@@ -19,8 +19,19 @@ import {createRoomieDTO} from "../../DTOs/createRoomieDTO.ts";
 
 
 function ViewAllProfiles() {
-    const [roomies, setRoomies] = useState<Roomie[]>([]);
     
+    const [roomies, setRoomies] = useState<Roomie[]>([]);
+
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [deletingRoomieId, setDeletingRoomieId] = useState<string | null>(null);
+
+
+
+    const openDeleteDialog = (roomieId: string | null) => {
+        setIsDeleteDialogOpen(true);
+        setDeletingRoomieId(roomieId);
+    };
+
     useEffect(() => {
         // Fetch roomies data when the component mounts
         fetchAllRoomies()
@@ -36,20 +47,26 @@ function ViewAllProfiles() {
         handleSubmit,
         formState: { }
     } = useForm();
-    
-    const handleDeleteClick = (id : string) : void => {
-        deleteRoomie(id).then(() : void => {
-            fetchAllRoomies()
-                .then((data) => {
-                    setRoomies(data);
-                })
-                .catch((error) => {
-                    console.error('Error fetching roomies:', error);
-                });
-            // TODO: prompt the user a dialog to confirm whether they really want to delete the profile.
-            //       redirect user to homepage
-        });
+
+    const handleDeleteClick = (id: string | null): void => {
+        if (id !== null) {
+            openDeleteDialog(id);
+        }
     };
+    const handleConfirmDelete = (roomieId: string | null) => {
+        if (roomieId !== null) {
+            deleteRoomie(roomieId).then(() => {
+                fetchAllRoomies()
+                    .then((data) => {
+                        setRoomies(data);
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching roomies:', error);
+                    });
+            });
+        }
+    };
+
     
     return (
         <div className={"tableContainer"}>
@@ -61,7 +78,7 @@ function ViewAllProfiles() {
                                 <TableCell>Image</TableCell>
                                 <TableCell>Description</TableCell>
                                 <TableCell>Attributes</TableCell>
-                                <TableCell>Links</TableCell>
+                                <TableCell>Buttons</TableCell>
                             </TableRow>
                         </TableHead>
                         
@@ -81,12 +98,10 @@ function ViewAllProfiles() {
                                         ))}
                                     </TableCell>
                                     <TableCell>
-                                        <ul>
-                                            <Button variant="contained" href={`/view-profile/${roomie.id}`}>View</Button>
-                                        </ul>
-                                        <ul>
+                                        <div className={"edit-delete-buttons"}>
+                                            <Button style={{ marginRight: '10px' }}  variant="contained" href={`/view-profile/${roomie.id}`}>View</Button>
                                             <Button variant="contained" color="error" onClick={() => handleDeleteClick(roomie.id)}> Delete </Button>
-                                        </ul>
+                                        </div>
                                     </TableCell>
                                     
                                 </TableRow>
@@ -116,7 +131,7 @@ function ViewAllProfiles() {
             })}>
                 <div>
                     <TextField
-                        label="Profile link"
+                        label="Profile Image Link"
                         margin ="normal"
                         variant="outlined"
                         {...register("profileLink")}
@@ -140,8 +155,32 @@ function ViewAllProfiles() {
                 </div>
                 <Button type="submit" variant="contained" color="success"> Create </Button>
             </form>
+            <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
+                <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
+                <DialogContent>
+                    <p>Are you sure you want to delete this profile?</p>
+                    <p>id: {deletingRoomieId}</p>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setIsDeleteDialogOpen(false)} color="primary">
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            setIsDeleteDialogOpen(false);
+                            handleConfirmDelete(deletingRoomieId);
+                        }}
+                        color="error"
+                    >
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
-    );
+
+
+
+);
 }
 
 export default ViewAllProfiles;
