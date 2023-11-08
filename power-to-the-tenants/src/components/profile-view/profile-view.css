@@ -9,6 +9,7 @@ body {
 }
 
 .profile-image {
+  margin-top: 1rem;
   width: 200px; 
   height: auto; 
   border-radius: 30px;
@@ -43,10 +44,4 @@ body {
 }
 
 
-/* Color Theme Swatches in Hex */
-.Primary-Dark-Teal { background-color: #348888; }
-.Primary-Teal { background-color: #22BABB; }
-.Primary-Light-Teal { background-color: #9EF8EE; }
-.Secondary-Orange { background-color: #FA7F08; }
-.Secondary-Dark-Orange { background-color: #F24405; }
-  
+
