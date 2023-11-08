@@ -78,7 +78,7 @@ function ViewAllProfiles() {
                                 <TableCell>Image</TableCell>
                                 <TableCell>Description</TableCell>
                                 <TableCell>Attributes</TableCell>
-                                <TableCell>Links</TableCell>
+                                <TableCell>Buttons</TableCell>
                             </TableRow>
                         </TableHead>
                         
@@ -98,13 +98,10 @@ function ViewAllProfiles() {
                                         ))}
                                     </TableCell>
                                     <TableCell>
-                                        <ul>
-                                            <Button variant="contained" href={`/view-profile/${roomie.id}`}>View</Button>
-                                        </ul>
-                                        
-                                        <ul>
+                                        <div className={"edit-delete-buttons"}>
+                                            <Button style={{ marginRight: '10px' }}  variant="contained" href={`/view-profile/${roomie.id}`}>View</Button>
                                             <Button variant="contained" color="error" onClick={() => handleDeleteClick(roomie.id)}> Delete </Button>
-                                        </ul>
+                                        </div>
                                     </TableCell>
                                     
                                 </TableRow>
@@ -162,6 +159,7 @@ function ViewAllProfiles() {
                 <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
                 <DialogContent>
                     <p>Are you sure you want to delete this profile?</p>
+                    <p>id: {deletingRoomieId}</p>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setIsDeleteDialogOpen(false)} color="primary">

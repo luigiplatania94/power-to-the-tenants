@@ -4,6 +4,11 @@
     object-fit: cover;
 }
 
+.edit-delete-buttons {
+    display: flex;
+    justify-content: flex-start;
+}
+
 .attribute {
     margin : 0.3rem;
 }
