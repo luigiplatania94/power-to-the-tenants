@@ -1,12 +1,15 @@
 import { Roomie } from "../models/roomie";
-import axios from "axios";
+import axios, {AxiosInstance, AxiosResponse} from "axios";
 import {createRoomieDTO} from "../DTOs/createRoomieDTO.ts";
 
 
+const instance : AxiosInstance = axios.create({
+    baseURL: 'http://localhost:5016',
+});
 
 export const fetchRoomie = async (id: string | undefined): Promise<Roomie> => {
     try {
-        const response = await axios.get(`http://localhost:5016/Roomie/${id}`);
+        const response: AxiosResponse<any,any> = await instance.get(`/Roomie/${id}`);
         return response.data;
     } 
     catch (error) {
@@ -17,10 +20,7 @@ export const fetchRoomie = async (id: string | undefined): Promise<Roomie> => {
 
 export const fetchAllRoomies = async (): Promise<Roomie[]> => {
     try {
-        const response = await axios({
-            method: 'get',
-            url: `http://localhost:5016/Roomie/all`,
-        });
+        const response: AxiosResponse<any,any> = await instance.get(`/Roomie/all`);
         return response.data;
     }
     catch (error) {
@@ -31,7 +31,7 @@ export const fetchAllRoomies = async (): Promise<Roomie[]> => {
 
 export async function createRoomie(data: createRoomieDTO) {
     try {
-        const response = await axios.post(`http://localhost:5016/Roomie`, data);
+        const response: AxiosResponse<any,any> = await instance.post(`/Roomie`, data);
         return response.data;
     }
 
@@ -43,8 +43,10 @@ export async function createRoomie(data: createRoomieDTO) {
 
 export async function updateRoomieData(data: Roomie) {
     try {
+        // TODO attributes do not work. This is a workaround
         if (data.attributes == null) data.attributes = [];
-        const response = await axios.put(`http://localhost:5016/Roomie/${data.id}`, data);
+        
+        const response: AxiosResponse<any,any> = await instance.put(`/Roomie/${data.id}`, data);
         return response.data;
     }
 
@@ -56,7 +58,7 @@ export async function updateRoomieData(data: Roomie) {
 
 export async function deleteRoomie(id: string | undefined) {
     try {
-        const response = await axios.delete(`http://localhost:5016/Roomie/${id}`);
+        const response: AxiosResponse<any,any> = await instance.delete(`/Roomie/${id}`);
         return response.data;
     }
 
