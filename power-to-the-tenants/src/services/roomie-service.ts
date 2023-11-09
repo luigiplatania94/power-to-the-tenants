@@ -1,5 +1,5 @@
 import { Roomie } from "../models/roomie";
-import axios, {AxiosInstance, AxiosResponse} from "axios";
+import axios, {AxiosInstance} from "axios";
 import {createRoomieDTO} from "../DTOs/createRoomieDTO.ts";
 
 
@@ -9,8 +9,8 @@ const instance : AxiosInstance = axios.create({
 
 export const fetchRoomie = async (id: string | undefined): Promise<Roomie> => {
     try {
-        const response: AxiosResponse<any,any> = await instance.get(`/Roomie/${id}`);
-        return response.data;
+        const { data } = await instance.get(`/Roomie/${id}`);
+        return data;
     } 
     catch (error) {
         console.error('Error fetching roomie:', error);
@@ -20,8 +20,8 @@ export const fetchRoomie = async (id: string | undefined): Promise<Roomie> => {
 
 export const fetchAllRoomies = async (): Promise<Roomie[]> => {
     try {
-        const response: AxiosResponse<any,any> = await instance.get(`/Roomie/all`);
-        return response.data;
+        const { data } = await instance.get(`/Roomie/all`);
+        return data;
     }
     catch (error) {
         console.error('Error fetching roomies:', error);
@@ -29,10 +29,10 @@ export const fetchAllRoomies = async (): Promise<Roomie[]> => {
     }
 }
 
-export async function createRoomie(data: createRoomieDTO) {
+export async function createRoomie(roomieDTO: createRoomieDTO) {
     try {
-        const response: AxiosResponse<any,any> = await instance.post(`/Roomie`, data);
-        return response.data;
+        const { data } = await instance.post(`/Roomie`, roomieDTO);
+        return data;
     }
 
     catch (error) {
@@ -41,13 +41,13 @@ export async function createRoomie(data: createRoomieDTO) {
     }
 }
 
-export async function updateRoomieData(data: Roomie) {
+export async function updateRoomieData(roomie: Roomie) {
     try {
         // TODO attributes do not work. This is a workaround
-        if (data.attributes == null) data.attributes = [];
-        
-        const response: AxiosResponse<any,any> = await instance.put(`/Roomie/${data.id}`, data);
-        return response.data;
+        if (roomie.attributes == null) roomie.attributes = [];
+
+        const { data }  = await instance.put(`/Roomie/${roomie.id}`, roomie);
+        return data;
     }
 
     catch (error) {
@@ -58,8 +58,8 @@ export async function updateRoomieData(data: Roomie) {
 
 export async function deleteRoomie(id: string | undefined) {
     try {
-        const response: AxiosResponse<any,any> = await instance.delete(`/Roomie/${id}`);
-        return response.data;
+        const { data }  = await instance.delete(`/Roomie/${id}`);
+        return data;
     }
 
     catch (error) {
