@@ -1,5 +1,5 @@
 import {SetStateAction, useEffect, useState} from 'react';
-import {deleteRoomie, fetchRoomie, updateRoomieData} from '../../services/roomie-service';
+import {deleteRoomie, fetchRoomie, updateRoomie} from '../../services/roomie-service';
 import './profile-view.css';
 import {
     Alert,
@@ -71,7 +71,7 @@ export function ProfileView() {
             if (updatedRoomie.attributes != null)
             {
                 updatedRoomie.attributes.splice(index, 1);
-                updateRoomieData(updatedRoomie).then(() => {
+                updateRoomie(updatedRoomie).then(() => {
                     setRoomie(updatedRoomie);
                 })
             }
@@ -92,7 +92,7 @@ export function ProfileView() {
                                         ...roomie,
                                         profileImage: data.imageLink,
                                     };
-                                    updateRoomieData(updatedRoomie).then(() => {
+                                    updateRoomie(updatedRoomie).then(() => {
                                       setRoomie(updatedRoomie);
                                       openSnackbar("Profile image updated succesfully", "success");
                                     })
@@ -129,7 +129,7 @@ export function ProfileView() {
                                     ...roomie,
                                     description: data.editedDescription,
                                 };
-                                updateRoomieData(updatedRoomie)
+                                updateRoomie(updatedRoomie)
                                     .then(() => {
                                         setRoomie(updatedRoomie);
                                         openSnackbar("Description updated succesfully", "success");
@@ -193,7 +193,7 @@ export function ProfileView() {
                                     ...roomie, 
                                     attributes: [...roomie.attributes, data.attributeName],
                                 };
-                                updateRoomieData(updatedRoomie).then(() => {
+                                updateRoomie(updatedRoomie).then(() => {
                                     setRoomie(updatedRoomie);
                                     openSnackbar("Attributes updated succesfully", "success");
                                 })

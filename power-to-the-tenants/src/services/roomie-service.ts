@@ -41,7 +41,7 @@ export async function createRoomie(roomieDTO: createRoomieDTO) {
     }
 }
 
-export async function updateRoomieData(roomie: Roomie) {
+export async function updateRoomie(roomie: Roomie) {
     try {
         // TODO attributes do not work. This is a workaround
         if (roomie.attributes == null) roomie.attributes = [];
