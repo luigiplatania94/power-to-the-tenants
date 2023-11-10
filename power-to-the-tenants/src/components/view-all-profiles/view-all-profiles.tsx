@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {deleteRoomie, fetchAllRoomies} from '../../services/roomie-service';
+import {fetchAllRoomies} from '../../services/roomie-service';
 import {Roomie} from "../../models/roomie.ts";
 import './view-all-profiles.css';
 import {
@@ -43,23 +43,21 @@ function ViewAllProfiles() {
     }, []);
     
 
+    // Delete roomie logic
     const handleDeleteClick = (id: string | null): void => {
         if (id !== null) {
             setIsDeleteDialogOpen(true);
             setDeletingRoomieId(id);
         }
     };
-    
-    const handleConfirmDelete = (roomieId: string | undefined) => {
-        if (roomieId !== null) {
-            deleteRoomie(roomieId).then(() => {
-                fetchAndSetRoomies();
-            });
-        }
+    const handleConfirmDelete = () => {
+        fetchAndSetRoomies();
+        setIsDeleteDialogOpen(false);
     };
-
-
-    const handleCreateRoomie = () => {
+    
+    
+    // Creae roomie logic
+    const handleConfirmCreate = () => {
         fetchAndSetRoomies();
         setIsCreateDialogOpen(false);
     };
@@ -118,7 +116,7 @@ function ViewAllProfiles() {
             <CreateRoomieDialog
                 isOpen={isCreateDialogOpen}
                 onClose={() => setIsCreateDialogOpen(false)}
-                onRoomieCreated={handleCreateRoomie}
+                onConfirmCreate={handleConfirmCreate}
             />
             
             {/*Dialog for deleting a roomie profile*/}

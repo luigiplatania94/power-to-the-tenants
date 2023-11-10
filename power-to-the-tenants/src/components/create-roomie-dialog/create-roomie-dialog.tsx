@@ -6,10 +6,10 @@ import {createRoomie} from "../../services/roomie-service.ts";
 interface CreateRoomieDialogProps {
     isOpen: boolean;
     onClose: () => void;
-    onRoomieCreated: () => void;
+    onConfirmCreate: () => void;
 }
 
-const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose, onRoomieCreated }) => {
+const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose, onConfirmCreate }) => {
     
     const [form, setForm] = useState<createRoomieDTO>({
         profileImage: '',
@@ -21,7 +21,7 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
         createRoomie(form)
             .then(() => {
                 // Notify the parent component that roomie is created
-                onRoomieCreated();
+                onConfirmCreate();
                 onClose();
             })
             .catch((error) => {
