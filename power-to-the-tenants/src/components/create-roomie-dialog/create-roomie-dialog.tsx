@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
 import { createRoomieDTO } from "../../DTOs/createRoomieDTO.ts";
+import {createRoomie} from "../../services/roomie-service.ts";
 
 interface CreateRoomieDialogProps {
     isOpen: boolean;
     onClose: () => void;
-    onCreateRoomie: (form: createRoomieDTO) => void;
+    onRoomieCreated: () => void;
 }
 
-const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose, onCreateRoomie }) => {
+const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose, onRoomieCreated }) => {
     
     const [form, setForm] = useState<createRoomieDTO>({
         profileImage: '',
@@ -17,8 +18,15 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
     });
 
     const handleCreateRoomie = () => {
-        onCreateRoomie(form);
-        onClose();
+        createRoomie(form)
+            .then(() => {
+                // Notify the parent component that roomie is created
+                onRoomieCreated();
+                onClose();
+            })
+            .catch((error) => {
+                console.error('Error creating roomie:', error);
+            });
     };
 
     return (

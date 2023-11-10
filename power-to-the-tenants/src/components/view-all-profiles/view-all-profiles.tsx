@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {createRoomie, deleteRoomie, fetchAllRoomies} from '../../services/roomie-service';
+import {deleteRoomie, fetchAllRoomies} from '../../services/roomie-service';
 import {Roomie} from "../../models/roomie.ts";
 import './view-all-profiles.css';
 import {
@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import {useForm} from "react-hook-form";
 import CreateRoomieDialog from "../create-roomie-dialog/create-roomie-dialog.tsx";
-import {createRoomieDTO} from "../../DTOs/createRoomieDTO.ts";
 import DeleteRoomieDialog from "../delete-roomie-dialog/delete-roomie-dialog.tsx";
 
 
@@ -29,8 +28,7 @@ function ViewAllProfiles() {
     
     const { formState: { } } = useForm();
 
-    useEffect(() => {
-        // Fetch roomies data when the component mounts
+    const fetchAndSetRoomies = () => {
         fetchAllRoomies()
             .then((data) => {
                 setRoomies(data);
@@ -38,6 +36,10 @@ function ViewAllProfiles() {
             .catch((error) => {
                 console.error('Error fetching roomies:', error);
             });
+    };
+    
+    useEffect(() => {
+        fetchAndSetRoomies();
     }, []);
     
 
@@ -51,31 +53,15 @@ function ViewAllProfiles() {
     const handleConfirmDelete = (roomieId: string | undefined) => {
         if (roomieId !== null) {
             deleteRoomie(roomieId).then(() => {
-                fetchAllRoomies()
-                    .then((data) => {
-                        setRoomies(data);
-                    })
-                    .catch((error) => {
-                        console.error('Error fetching roomies:', error);
-                    });
+                fetchAndSetRoomies();
             });
         }
     };
 
 
-    const handleCreateRoomie = (form: createRoomieDTO) => {
-        createRoomie(form).then(() => {
-            // Refresh the list of roomies
-            fetchAllRoomies()
-                .then((data) => {
-                    setRoomies(data);
-                })
-                .catch((error) => {
-                    console.error('Error fetching roomies:', error);
-                });
-
-            setIsCreateDialogOpen(false);
-        });
+    const handleCreateRoomie = () => {
+        fetchAndSetRoomies();
+        setIsCreateDialogOpen(false);
     };
 
     
@@ -132,7 +118,7 @@ function ViewAllProfiles() {
             <CreateRoomieDialog
                 isOpen={isCreateDialogOpen}
                 onClose={() => setIsCreateDialogOpen(false)}
-                onCreateRoomie={handleCreateRoomie}
+                onRoomieCreated={handleCreateRoomie}
             />
             
             {/*Dialog for deleting a roomie profile*/}
@@ -143,7 +129,7 @@ function ViewAllProfiles() {
                 deletingRoomieId={deletingRoomieId}
             />
         </div>
-);
+    );
 }
 
 export default ViewAllProfiles;
