@@ -19,7 +19,6 @@
   margin : 0.3rem;  
 }
 
-/*TODO use mui breakpoints*/
 @media (max-width: 425px) {
   .profile-image {
     width: 60%;

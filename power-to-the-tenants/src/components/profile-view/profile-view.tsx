@@ -1,13 +1,11 @@
 import {SetStateAction, useEffect, useState} from 'react';
-import {deleteRoomie, fetchRoomie, updateRoomieData} from '../../services/roomie-service';
+import {deleteRoomie, fetchRoomie, updateRoomie} from '../../services/roomie-service';
 import './profile-view.css';
 import {
     Alert,
     AlertColor,
     Button,
     Chip,
-    Dialog, DialogActions, DialogContent,
-    DialogTitle,
     Grid,
     Snackbar,
     TextField,
@@ -16,6 +14,7 @@ import {
 import {Roomie} from "../../models/roomie.ts";
 import {Link, useParams} from "react-router-dom";
 import {Controller, useForm} from "react-hook-form";
+import DeleteRoomieDialog from "../delete-roomie-dialog/delete-roomie-dialog.tsx";
 
 export function ProfileView() {
 
@@ -37,6 +36,17 @@ export function ProfileView() {
             control,
             formState: { }
     } = useForm();
+
+    // fetch roomie data when the page loads for the first time
+    useEffect(() => {
+        fetchRoomie(id).then(response => {
+            // Assuming the API returns an object with a 'newValue' property
+            setRoomie(response);
+        })
+            .catch(error => {
+                console.error("Error fetching roomie:", error);
+            });
+    }, []);
     
     const handleEditClick = () => {
         setIsEditing(!isEditing);
@@ -50,19 +60,12 @@ export function ProfileView() {
     const handleDeleteClick = () => {
         setIsDeleteDialogOpen(true);
     };
+
+    const handleConfirmDelete = () => {
+        setIsDeleteDialogOpen(false);
+        deleteRoomie(id).then(() => {});
+    };
     
-    // fetch roomie data when the page loads for the first time
-    useEffect(() => {
-        fetchRoomie(id).then(response => {
-            // Assuming the API returns an object with a 'newValue' property
-            setRoomie(response);
-        })
-            .catch(error => {
-                console.error("Error fetching roomie:", error);
-            });
-    }, []);
-
-
     function handleDeleteAttribute(index : number) {
         if (roomie) {
             const updatedRoomie: Roomie = {
@@ -71,7 +74,7 @@ export function ProfileView() {
             if (updatedRoomie.attributes != null)
             {
                 updatedRoomie.attributes.splice(index, 1);
-                updateRoomieData(updatedRoomie).then(() => {
+                updateRoomie(updatedRoomie).then(() => {
                     setRoomie(updatedRoomie);
                 })
             }
@@ -92,7 +95,7 @@ export function ProfileView() {
                                         ...roomie,
                                         profileImage: data.imageLink,
                                     };
-                                    updateRoomieData(updatedRoomie).then(() => {
+                                    updateRoomie(updatedRoomie).then(() => {
                                       setRoomie(updatedRoomie);
                                       openSnackbar("Profile image updated succesfully", "success");
                                     })
@@ -129,7 +132,7 @@ export function ProfileView() {
                                     ...roomie,
                                     description: data.editedDescription,
                                 };
-                                updateRoomieData(updatedRoomie)
+                                updateRoomie(updatedRoomie)
                                     .then(() => {
                                         setRoomie(updatedRoomie);
                                         openSnackbar("Description updated succesfully", "success");
@@ -193,7 +196,7 @@ export function ProfileView() {
                                     ...roomie, 
                                     attributes: [...roomie.attributes, data.attributeName],
                                 };
-                                updateRoomieData(updatedRoomie).then(() => {
+                                updateRoomie(updatedRoomie).then(() => {
                                     setRoomie(updatedRoomie);
                                     openSnackbar("Attributes updated succesfully", "success");
                                 })
@@ -253,29 +256,12 @@ export function ProfileView() {
                 </Snackbar>
 
                 {/*Dialog for deleting profile*/}
-                <Dialog open = {isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
-                    <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
-                    <DialogContent>
-                        <p>Are you sure you want to delete your profile?</p>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setIsDeleteDialogOpen(false)} color="primary">
-                            Cancel
-                        </Button>
-                        <Link to="/">
-                            <Button
-                                onClick={() => {
-                                    setIsDeleteDialogOpen(false);
-                                    deleteRoomie(id).then(() => {
-                                    });
-                                }}
-                                color="error"
-                            >
-                                Delete
-                            </Button>
-                        </Link>
-                    </DialogActions>
-                </Dialog>
+                <DeleteRoomieDialog
+                    isOpen={isDeleteDialogOpen}
+                    onClose={() => setIsDeleteDialogOpen(false)}
+                    onConfirmDelete={handleConfirmDelete}
+                    deletingRoomieId={id}
+                />
                 
             </Grid>
     )
