@@ -1,5 +1,5 @@
 import {SetStateAction, useEffect, useState} from 'react';
-import {deleteRoomie, fetchRoomie, updateRoomie} from '../../services/roomie-service';
+import { fetchRoomie, updateRoomie} from '../../services/roomie-service';
 import './profile-view.css';
 import {
     Alert,
@@ -56,14 +56,9 @@ export function ProfileView() {
         setSnackbarSeverity(severity);
         setIsSnackbarOpen(true);
     };
-
-    const handleDeleteClick = () => {
-        setIsDeleteDialogOpen(true);
-    };
-
+    
     const handleConfirmDelete = () => {
         setIsDeleteDialogOpen(false);
-        deleteRoomie(id).then(() => {});
     };
     
     function handleDeleteAttribute(index : number) {
@@ -229,7 +224,7 @@ export function ProfileView() {
                         <Button style={{ marginRight: '10px' }} size={isSmallScreen ? "small" : "large"} variant="contained" color="success" onClick={handleEditClick}>
                             {isEditing ? 'Stop' : 'Edit'}
                         </Button>
-                        <Button style={{ marginRight: '10px' }} size={isSmallScreen ? "small" : "large"} variant="contained" color="error" onClick={handleDeleteClick}>
+                        <Button style={{ marginRight: '10px' }} size={isSmallScreen ? "small" : "large"} variant="contained" color="error" onClick={() => setIsDeleteDialogOpen(true)}>
                             Delete
                         </Button>
                         <Link to="/">
