@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using PtttApi.Db.Entities;
+using PtttApi.Domain;
 
 namespace PtttApi.Db;
 
 public class TenantContext : DbContext
 {
     public DbSet<RoomieEntity> Roomies { get; set; }
+    public DbSet<TraitEntity> Traits { get; set; }
 
     public TenantContext( DbContextOptions options) : base(options)
     {
@@ -15,6 +17,10 @@ public class TenantContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<RoomieEntity>()
-            .HasMany(r => r.Attributes); // No navigation property on AttributeEntity
+            .HasMany(r => r.Traits)
+            .WithMany(attr => attr.Roomies);
+        
+        // modelBuilder.Entity<TraitEntity>
+        //.WithName
     }
 }

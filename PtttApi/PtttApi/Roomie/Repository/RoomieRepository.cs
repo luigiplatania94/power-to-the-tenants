@@ -31,7 +31,7 @@ public class RoomieRepository : IRoomieRepository
             ProfileImage = roomie.ProfileImage,
             Description = roomie.Description,
 
-            Attributes = roomie.Attributes.Select(attr => new AttributeEntity(attr.Id, attr.Name)).ToList()
+            Traits = roomie.Traits.Select(attr => new TraitEntity(attr.Id, attr.Name)).ToList()
         };
         
         _tenantContext.Roomies.Add(newRoomie);
@@ -51,7 +51,7 @@ public class RoomieRepository : IRoomieRepository
         roomieToUpdate.ProfileImage = dto.ProfileImage;
         roomieToUpdate.Description = dto.Description;
         
-        roomieToUpdate.Attributes =  dto.Attributes.Select(at => new AttributeEntity(at)).ToList(); 
+        roomieToUpdate.Traits =  dto.Traits.Select(at => new TraitEntity(at)).ToList(); 
         
         await _tenantContext.SaveChangesAsync();
         

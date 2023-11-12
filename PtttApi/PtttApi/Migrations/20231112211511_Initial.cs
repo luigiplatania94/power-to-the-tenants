@@ -25,37 +25,58 @@ namespace PtttApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AttributeEntity",
+                name: "Traits",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AttributeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RoomieEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    TraitName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AttributeEntity", x => x.Id);
+                    table.PrimaryKey("PK_Traits", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TraitList",
+                columns: table => new
+                {
+                    RoomiesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TraitsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TraitList", x => new { x.RoomiesId, x.TraitsId });
                     table.ForeignKey(
-                        name: "FK_AttributeEntity_Roomies_RoomieEntityId",
-                        column: x => x.RoomieEntityId,
+                        name: "FK_TraitList_Roomies_RoomiesId",
+                        column: x => x.RoomiesId,
                         principalTable: "Roomies",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TraitList_Traits_TraitsId",
+                        column: x => x.TraitsId,
+                        principalTable: "Traits",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttributeEntity_RoomieEntityId",
-                table: "AttributeEntity",
-                column: "RoomieEntityId");
+                name: "IX_TraitList_TraitsId",
+                table: "TraitList",
+                column: "TraitsId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AttributeEntity");
+                name: "TraitList");
 
             migrationBuilder.DropTable(
                 name: "Roomies");
+
+            migrationBuilder.DropTable(
+                name: "Traits");
         }
     }
 }

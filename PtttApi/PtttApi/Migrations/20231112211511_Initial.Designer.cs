@@ -12,8 +12,8 @@ using PtttApi.Db;
 namespace PtttApi.Migrations
 {
     [DbContext(typeof(TenantContext))]
-    [Migration("20231031171544_many-to-many relationship between roomies and attributes")]
-    partial class manytomanyrelationshipbetweenroomiesandattributes
+    [Migration("20231112211511_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,36 +24,6 @@ namespace PtttApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("AttributeEntityRoomieEntity", b =>
-                {
-                    b.Property<Guid>("AttributesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RoomieEntityId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AttributesId", "RoomieEntityId");
-
-                    b.HasIndex("RoomieEntityId");
-
-                    b.ToTable("AttributeEntityRoomieEntity");
-                });
-
-            modelBuilder.Entity("PtttApi.Db.Entities.AttributeEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AttributeName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AttributeEntity");
-                });
 
             modelBuilder.Entity("PtttApi.Db.Entities.RoomieEntity", b =>
                 {
@@ -74,17 +44,47 @@ namespace PtttApi.Migrations
                     b.ToTable("Roomies");
                 });
 
-            modelBuilder.Entity("AttributeEntityRoomieEntity", b =>
+            modelBuilder.Entity("PtttApi.Db.Entities.TraitEntity", b =>
                 {
-                    b.HasOne("PtttApi.Db.Entities.AttributeEntity", null)
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TraitName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Traits");
+                });
+
+            modelBuilder.Entity("RoomieEntityTraitEntity", b =>
+                {
+                    b.Property<Guid>("RoomiesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TraitsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("RoomiesId", "TraitsId");
+
+                    b.HasIndex("TraitsId");
+
+                    b.ToTable("RoomieEntityTraitEntity");
+                });
+
+            modelBuilder.Entity("RoomieEntityTraitEntity", b =>
+                {
+                    b.HasOne("PtttApi.Db.Entities.RoomieEntity", null)
                         .WithMany()
-                        .HasForeignKey("AttributesId")
+                        .HasForeignKey("RoomiesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PtttApi.Db.Entities.RoomieEntity", null)
+                    b.HasOne("PtttApi.Db.Entities.TraitEntity", null)
                         .WithMany()
-                        .HasForeignKey("RoomieEntityId")
+                        .HasForeignKey("TraitsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
