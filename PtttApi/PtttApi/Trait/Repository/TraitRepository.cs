@@ -3,7 +3,7 @@ using PtttApi.Db;
 using PtttApi.Db.Entities;
 using PtttApi.Domain;
 
-namespace PtttApi.Attribute.Repository;
+namespace PtttApi.Trait.Repository;
 
 public class TraitRepository : ITraitRepository
 {
@@ -15,7 +15,7 @@ public class TraitRepository : ITraitRepository
     }
 
 
-    public async Task<List<TraitEntity>> GetAllAttribute()
+    public async Task<List<TraitEntity>> GetAllTraits()
         => await _tenantContext.Traits
             .ToListAsync();
 }

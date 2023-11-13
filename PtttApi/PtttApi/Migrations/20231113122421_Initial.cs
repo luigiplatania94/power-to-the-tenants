@@ -37,7 +37,7 @@ namespace PtttApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TraitList",
+                name: "RoomieEntityTraitEntity",
                 columns: table => new
                 {
                     RoomiesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -45,15 +45,15 @@ namespace PtttApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TraitList", x => new { x.RoomiesId, x.TraitsId });
+                    table.PrimaryKey("PK_RoomieEntityTraitEntity", x => new { x.RoomiesId, x.TraitsId });
                     table.ForeignKey(
-                        name: "FK_TraitList_Roomies_RoomiesId",
+                        name: "FK_RoomieEntityTraitEntity_Roomies_RoomiesId",
                         column: x => x.RoomiesId,
                         principalTable: "Roomies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TraitList_Traits_TraitsId",
+                        name: "FK_RoomieEntityTraitEntity_Traits_TraitsId",
                         column: x => x.TraitsId,
                         principalTable: "Traits",
                         principalColumn: "Id",
@@ -61,8 +61,8 @@ namespace PtttApi.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TraitList_TraitsId",
-                table: "TraitList",
+                name: "IX_RoomieEntityTraitEntity_TraitsId",
+                table: "RoomieEntityTraitEntity",
                 column: "TraitsId");
         }
 
@@ -70,7 +70,7 @@ namespace PtttApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "TraitList");
+                name: "RoomieEntityTraitEntity");
 
             migrationBuilder.DropTable(
                 name: "Roomies");

@@ -14,11 +14,13 @@ public class TraitEntity
     {
         Id = trait.Id;
         TraitName = trait.Name;
+        Roomies = null;
     }
 
     public TraitEntity(Guid id, string traitName)
     {
         Id = id;
         TraitName = traitName;
+        Roomies = null;
     }
 }

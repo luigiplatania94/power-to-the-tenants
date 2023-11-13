@@ -7,6 +7,8 @@ public class Trait
     public Guid Id { get; set; }
     public string Name { get; set; }
 
+    public Trait() { }
+    
     public Trait(TraitEntity traitEntity)
     {
         Id = traitEntity.Id;

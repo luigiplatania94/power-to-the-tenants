@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using PtttApi.Db.Entities;
-using PtttApi.Domain;
 
 namespace PtttApi.Db;
 
@@ -8,6 +7,7 @@ public class TenantContext : DbContext
 {
     public DbSet<RoomieEntity> Roomies { get; set; }
     public DbSet<TraitEntity> Traits { get; set; }
+    
 
     public TenantContext( DbContextOptions options) : base(options)
     {
@@ -20,7 +20,5 @@ public class TenantContext : DbContext
             .HasMany(r => r.Traits)
             .WithMany(attr => attr.Roomies);
         
-        // modelBuilder.Entity<TraitEntity>
-        //.WithName
     }
 }

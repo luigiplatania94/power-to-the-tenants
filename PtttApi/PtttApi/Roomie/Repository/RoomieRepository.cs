@@ -17,11 +17,13 @@ public class RoomieRepository : IRoomieRepository
 
     public async Task<RoomieEntity> GetRoomieById(Guid id)
         => await _tenantContext.Roomies
+            .Include(r => r.Traits)
             .Where(r => r.Id == id) 
             .FirstOrDefaultAsync(); 
     
     public async Task<List<RoomieEntity>> GetAllRoomies() 
         => await _tenantContext.Roomies
+            .Include(r => r.Traits)
             .ToListAsync();
 
     public async Task<RoomieEntity> CreateRoomie(CreateRoomieDTO roomie)

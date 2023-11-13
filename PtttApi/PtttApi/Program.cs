@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using PtttApi.Attribute.Repository;
-using PtttApi.Attribute.Service;
+using PtttApi.Trait.Repository;
+using PtttApi.Trait.Service;
 using PtttApi.Db;
 using PtttApi.Repositories;
 using PtttApi.Services;
