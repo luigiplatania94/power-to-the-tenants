@@ -1,12 +1,12 @@
 import {SetStateAction, useEffect, useState} from 'react';
-import { fetchRoomie, updateRoomie} from '../../services/roomie-service';
+import {fetchAllTraits, fetchRoomie, updateRoomie} from '../../services/roomie-service';
 import './profile-view.css';
 import {
     Alert,
-    AlertColor,
+    AlertColor, Box,
     Button,
-    Chip,
-    Grid,
+    Chip, FormControl,
+    Grid, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent,
     Snackbar,
     TextField,
     useMediaQuery
@@ -30,18 +30,37 @@ export function ProfileView() {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     
     const isSmallScreen = useMediaQuery('(max-width:600px)');
+
+    const [selectedTraits, setSelectedTraits] = useState<string[]>([]);
+    const [allTraits, setAllTraits] = useState<string[]>([]);
+
+
     
-    const { register, 
+    const { register,
             handleSubmit,
             control,
             formState: { }
     } = useForm();
+
+    useEffect(() => {
+        const fetchTraits = async () => {
+            try {
+                const traits = await fetchAllTraits();
+                setAllTraits(traits.map((trait) => trait.name));
+            } catch (error) {
+                console.error('Error fetching traits:', error);
+            }
+        };
+
+        fetchTraits();
+    }, []);
 
     // fetch roomie data when the page loads for the first time
     useEffect(() => {
         fetchRoomie(id).then(response => {
             // Assuming the API returns an object with a 'newValue' property
             setRoomie(response);
+            setSelectedTraits(response?.traits?.map((trait) => trait.name) || []);
         })
             .catch(error => {
                 console.error("Error fetching roomie:", error);
@@ -60,15 +79,20 @@ export function ProfileView() {
     const handleConfirmDelete = () => {
         setIsDeleteDialogOpen(false);
     };
+
+    const handleChange = (event: SelectChangeEvent<typeof selectedTraits>) => {
+        setSelectedTraits(event.target.value as string[]);
+    };
     
+    // TODO USE API ENDPOINT FOR UPDATING TRAITS
     function handleDeleteAttribute(index : number) {
         if (roomie) {
             const updatedRoomie: Roomie = {
                 ...roomie,
             };
-            if (updatedRoomie.attributes != null)
+            if (updatedRoomie.traits != null)
             {
-                updatedRoomie.attributes.splice(index, 1);
+                updatedRoomie.traits.splice(index, 1);
                 updateRoomie(updatedRoomie).then(() => {
                     setRoomie(updatedRoomie);
                 })
@@ -176,46 +200,59 @@ export function ProfileView() {
                     )}
                 </Grid>
                 
-                {/* Attributes */}
+                {/* Traits */}
                 <Grid item lg={12} xs={12}>
+                    {!isEditing && (
                         <div>
-                            {roomie?.attributes && roomie.attributes.map((attribute, index) => (
+                            {roomie?.traits && roomie.traits.map((attribute, index) => (
                                 <Chip className={"attribute"}  key = {index} label = {attribute.name} onDelete={isEditing ? () => handleDeleteAttribute(index) : undefined} size={isSmallScreen ? "small" : "medium"}></Chip>
                             ))}
                         </div>
-                        
-                        {isEditing && (
+                    )}
+
+                    {isEditing && (
+                        <div>
                         <form onSubmit={handleSubmit((data ) => {
-                            if (roomie && roomie.attributes != null) {
-                                const updatedRoomie: Roomie = {
-                                    ...roomie, 
-                                    attributes: [...roomie.attributes, data.attributeName],
-                                };
-                                updateRoomie(updatedRoomie).then(() => {
-                                    setRoomie(updatedRoomie);
-                                    openSnackbar("Attributes updated succesfully", "success");
-                                })
-                                .catch(error => {
-                                    console.error("Error adding new roomie's attribute name:", error);
-                                    openSnackbar("Attributes failed to update", "error");
-                                });
-                            }
+                            console.log(data);
+                            console.log(selectedTraits);
                         })}>
-                            <div>
-                                <TextField
-                                    size={isSmallScreen ? "small" : "medium"}
-                                    label="Attribute Name"
-                                    margin ="normal"
-                                    variant="outlined"
-                                    className={"input-attribute"}
-                                    {...register("attributeName")}
-                                />
-                            </div>
-                            <div>
-                                <Button type="submit" size={isSmallScreen ? "small" : "large"} variant="contained" color="success" className ={"button-attribute button-update animation"}>Add</Button>
-                            </div>
+                        
+                            <FormControl fullWidth variant="outlined" size={isSmallScreen ? 'small' : 'medium'}>
+                                <InputLabel id="traits-label">Traits</InputLabel>
+                                <Select
+                                    defaultValue={roomie?.traits?.map((trait) => trait.name) || []}
+                                    labelId="traits-label"
+                                    id="traits-select"
+                                    multiple
+                                    onChange={handleChange}
+                                    input={<OutlinedInput label="Traits" />}
+                                    renderValue={(selected) => (
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                            {selected.map((value) => (
+                                                <Chip key={value} label={value} />
+                                            ))}
+                                        </Box>
+                                    )}
+                                >
+                                    {allTraits.map((trait) => (
+                                        <MenuItem key={trait} value={trait}>
+                                            {trait}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <Button
+                                type="submit"
+                                size={isSmallScreen ? 'small' : 'large'}
+                                variant="contained"
+                                color="success"
+                                className={'button-attribute button-update animation'}
+                            >
+                                Add
+                            </Button>
                         </form>
-                        )}
+                        </div>
+                    )}
 
                 </Grid>
 

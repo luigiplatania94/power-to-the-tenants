@@ -3,12 +3,13 @@ using PtttApi.Db;
 using PtttApi.Db.Entities;
 using PtttApi.Exceptions;
 using PtttApi.Repositories;
+using PtttApi.Trait.DTOs;
 
 namespace PtttApi.Trait.Repository;
 
 public class TraitListRepository : ITraitListRepository
 {
-    
+
     private readonly TenantContext _tenantContext;
     private readonly IRoomieRepository _roomieRepository;
 
@@ -18,15 +19,23 @@ public class TraitListRepository : ITraitListRepository
         _roomieRepository = roomieRepository;
     }
 
-    
-    public async Task<RoomieEntity> UpdateRoomieTraits(List<Domain.Trait> traits, Guid roomieId)
+
+    public async Task<RoomieEntity> UpdateRoomieTraits(List<UpdateRoomieTraitDTO> updateRoomieTraitsDTO, Guid roomieId)
     {
         var roomieToUpdate = await _roomieRepository.GetRoomieById(roomieId);
-        
+
         if (roomieToUpdate == null) throw new RoomieNotFoundException();
 
-        roomieToUpdate.Traits = traits.Select(trait => new TraitEntity(trait)).ToList(); 
+        roomieToUpdate.Traits.Clear();
         
+        foreach (var updateTrait in updateRoomieTraitsDTO)
+        {
+            var traitEntity = await _tenantContext.Traits.FirstOrDefaultAsync(t => t.TraitName == updateTrait.traitName);
+            
+            roomieToUpdate.Traits.Add(traitEntity);
+        }
+
+        // Step 4: Save changes to the database
         await _tenantContext.SaveChangesAsync();
 
         return roomieToUpdate;

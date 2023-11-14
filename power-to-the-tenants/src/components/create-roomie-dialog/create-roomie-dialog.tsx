@@ -55,10 +55,10 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                     variant="outlined"
                     fullWidth
                     value={form.attributes.join(', ')}
-                    // TODO fix attributes
+                    // TODO fix traits
                     // onChange={(e) => setForm({
                     //     ...form,
-                    //     attributes: e.target.value
+                    //     traits: e.target.value
                     //         .split(',')
                     //         .map((attribute) => attribute.trim()),
                     // })}

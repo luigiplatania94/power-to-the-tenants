@@ -1,4 +1,4 @@
-export interface RoomieAttribute {
+export interface Trait {
     id: string;
     name: string;
 }

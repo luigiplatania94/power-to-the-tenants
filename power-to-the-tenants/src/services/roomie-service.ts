@@ -1,6 +1,7 @@
 import { Roomie } from "../models/roomie";
-import axios, {AxiosInstance} from "axios";
+import {Trait} from "../models/trait.ts";
 import {createRoomieDTO} from "../DTOs/createRoomieDTO.ts";
+import axios, {AxiosInstance} from "axios";
 
 
 const instance : AxiosInstance = axios.create({
@@ -29,6 +30,29 @@ export const fetchAllRoomies = async (): Promise<Roomie[]> => {
     }
 }
 
+export const fetchAllTraits = async (): Promise<Trait[]> => {
+    try {
+        const { data } = await instance.get(`/Trait/all`);
+        return data;
+    }
+    catch (error) {
+        console.error('Error fetching roomies:', error);
+        throw error;
+    }
+}
+
+export async function updateRoomieTraits(traits : string[], id: string | undefined) {
+    try {
+        const { data }  = await instance.put(`/Trait/${id}`, traits);
+        return data;
+    }
+
+    catch (error) {
+        console.error('Error updating roomie traits:', error);
+        throw error;
+    }
+}
+
 export async function createRoomie(roomieDTO: createRoomieDTO) {
     try {
         const { data } = await instance.post(`/Roomie`, roomieDTO);
@@ -43,8 +67,7 @@ export async function createRoomie(roomieDTO: createRoomieDTO) {
 
 export async function updateRoomie(roomie: Roomie) {
     try {
-        // TODO attributes do not work. This is a workaround
-        if (roomie.attributes == null) roomie.attributes = [];
+        if (roomie.traits == null) roomie.traits = [];
 
         const { data }  = await instance.put(`/Roomie/${roomie.id}`, roomie);
         return data;

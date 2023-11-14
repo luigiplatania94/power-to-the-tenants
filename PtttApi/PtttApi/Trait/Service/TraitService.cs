@@ -1,4 +1,5 @@
 using PtttApi.Domain;
+using PtttApi.Trait.DTOs;
 using PtttApi.Trait.Repository;
 
 namespace PtttApi.Trait.Service;
@@ -15,9 +16,9 @@ public class TraitService : ITraitService
     }
 
 
-    public async Task<Roomie> UpdateRoomieTraits(List<Domain.Trait> traits, Guid id)
+    public async Task<Roomie> UpdateRoomieTraits(List<UpdateRoomieTraitDTO> updateRoomieTraitsDTO, Guid id)
     {
-        return new Roomie(await _traitListRepository.UpdateRoomieTraits(traits,id));
+        return new Roomie(await _traitListRepository.UpdateRoomieTraits(updateRoomieTraitsDTO,id));
     }
     
     public async Task<List<Domain.Trait>> GetAllTraits()

@@ -1,8 +1,8 @@
-import {RoomieAttribute} from "./roomieAttribute.ts";
+import {Trait} from "./trait.ts";
 
 export interface Roomie {
     id : string;
     profileImage : string;
     description : string;
-    attributes: RoomieAttribute[];
+    traits: Trait[];
 }

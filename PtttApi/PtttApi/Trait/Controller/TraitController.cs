@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PtttApi.Exceptions;
+using PtttApi.Trait.DTOs;
 using PtttApi.Trait.Service;
 
 namespace PtttApi.Trait.Controller;
@@ -19,11 +20,11 @@ public class TraitController : ControllerBase
     }
     
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateRoomieTraits([FromBody] List<Domain.Trait> traits, Guid id)
+    public async Task<IActionResult> UpdateRoomieTraits(Guid id, [FromBody] List<UpdateRoomieTraitDTO> updateRoomieTraitDTO)
     {
         try
         {
-            var updatedRoomie = await _traitService.UpdateRoomieTraits(traits, id);
+            var updatedRoomie = await _traitService.UpdateRoomieTraits(updateRoomieTraitDTO, id);
             return Ok(updatedRoomie);
         }
         catch (RoomieNotFoundException exception)

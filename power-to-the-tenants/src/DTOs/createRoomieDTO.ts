@@ -1,7 +1,7 @@
-import {RoomieAttribute} from "../models/roomieAttribute.ts";
+import {Trait} from "../models/trait.ts";
 
 export interface createRoomieDTO {
     profileImage : string;
     description : string;
-    attributes: RoomieAttribute[];
+    attributes: Trait[];
 }
