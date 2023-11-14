@@ -20,11 +20,11 @@ public class TraitController : ControllerBase
     }
     
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateRoomieTraits(Guid id, [FromBody] List<UpdateRoomieTraitDTO> updateRoomieTraitDTO)
+    public async Task<IActionResult> UpdateRoomieTraits(Guid id, [FromBody] List<string> traitNames)
     {
         try
         {
-            var updatedRoomie = await _traitService.UpdateRoomieTraits(updateRoomieTraitDTO, id);
+            var updatedRoomie = await _traitService.UpdateRoomieTraits(traitNames, id);
             return Ok(updatedRoomie);
         }
         catch (RoomieNotFoundException exception)

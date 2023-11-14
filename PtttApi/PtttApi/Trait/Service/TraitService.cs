@@ -16,9 +16,9 @@ public class TraitService : ITraitService
     }
 
 
-    public async Task<Roomie> UpdateRoomieTraits(List<UpdateRoomieTraitDTO> updateRoomieTraitsDTO, Guid id)
+    public async Task<Roomie> UpdateRoomieTraits(List<string> traitNames, Guid id)
     {
-        return new Roomie(await _traitListRepository.UpdateRoomieTraits(updateRoomieTraitsDTO,id));
+        return new Roomie(await _traitListRepository.UpdateRoomieTraits(traitNames,id));
     }
     
     public async Task<List<Domain.Trait>> GetAllTraits()

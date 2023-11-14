@@ -2,6 +2,7 @@ import { Roomie } from "../models/roomie";
 import {Trait} from "../models/trait.ts";
 import {createRoomieDTO} from "../DTOs/createRoomieDTO.ts";
 import axios, {AxiosInstance} from "axios";
+import {updateRoomieDTO} from "../DTOs/updateRoomieDTO.ts";
 
 
 const instance : AxiosInstance = axios.create({
@@ -43,6 +44,8 @@ export const fetchAllTraits = async (): Promise<Trait[]> => {
 
 export async function updateRoomieTraits(traits : string[], id: string | undefined) {
     try {
+        console.log(traits);
+        console.log(id);
         const { data }  = await instance.put(`/Trait/${id}`, traits);
         return data;
     }
@@ -65,11 +68,10 @@ export async function createRoomie(roomieDTO: createRoomieDTO) {
     }
 }
 
-export async function updateRoomie(roomie: Roomie) {
+export async function updateRoomie(id: string, roomieDTO: updateRoomieDTO) {
     try {
-        if (roomie.traits == null) roomie.traits = [];
-
-        const { data }  = await instance.put(`/Roomie/${roomie.id}`, roomie);
+        
+        const { data }  = await instance.put(`/Roomie/${id}`, roomieDTO);
         return data;
     }
 

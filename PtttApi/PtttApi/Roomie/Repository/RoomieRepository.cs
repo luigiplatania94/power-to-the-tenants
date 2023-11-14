@@ -53,8 +53,6 @@ public class RoomieRepository : IRoomieRepository
         roomieToUpdate.ProfileImage = dto.ProfileImage;
         roomieToUpdate.Description = dto.Description;
         
-        roomieToUpdate.Traits =  dto.Traits.Select(at => new TraitEntity(at)).ToList(); 
-        
         await _tenantContext.SaveChangesAsync();
         
         return roomieToUpdate;

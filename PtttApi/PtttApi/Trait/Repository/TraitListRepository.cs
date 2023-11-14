@@ -20,7 +20,7 @@ public class TraitListRepository : ITraitListRepository
     }
 
 
-    public async Task<RoomieEntity> UpdateRoomieTraits(List<UpdateRoomieTraitDTO> updateRoomieTraitsDTO, Guid roomieId)
+    public async Task<RoomieEntity> UpdateRoomieTraits(List<string> traitNames, Guid roomieId)
     {
         var roomieToUpdate = await _roomieRepository.GetRoomieById(roomieId);
 
@@ -28,9 +28,9 @@ public class TraitListRepository : ITraitListRepository
 
         roomieToUpdate.Traits.Clear();
         
-        foreach (var updateTrait in updateRoomieTraitsDTO)
+        foreach (var updateTrait in traitNames)
         {
-            var traitEntity = await _tenantContext.Traits.FirstOrDefaultAsync(t => t.TraitName == updateTrait.traitName);
+            var traitEntity = await _tenantContext.Traits.FirstOrDefaultAsync(t => t.TraitName == updateTrait);
             
             roomieToUpdate.Traits.Add(traitEntity);
         }

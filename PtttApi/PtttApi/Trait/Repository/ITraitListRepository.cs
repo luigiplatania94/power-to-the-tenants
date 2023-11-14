@@ -5,5 +5,5 @@ namespace PtttApi.Trait.Repository;
 
 public interface ITraitListRepository
 {
-    Task<RoomieEntity> UpdateRoomieTraits(List<UpdateRoomieTraitDTO> updateRoomieTraitsDTO, Guid roomieId);
+    Task<RoomieEntity> UpdateRoomieTraits(List<string> traitNames, Guid roomieId);
 }
