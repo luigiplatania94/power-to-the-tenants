@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using PtttApi.Trait.Repository;
+using PtttApi.Trait.Service;
 using PtttApi.Db;
 using PtttApi.Repositories;
 using PtttApi.Services;
@@ -18,6 +20,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<TenantContext>();
 builder.Services.AddScoped<IRoomieRepository, RoomieRepository>();
 builder.Services.AddTransient<IRoomieService, RoomieService>();
+
+builder.Services.AddScoped<ITraitRepository, TraitRepository>();
+builder.Services.AddScoped<ITraitListRepository, TraitListRepository>();
+builder.Services.AddTransient<ITraitService, TraitService>();
+
+
+
 
 // allows for anyone to ask for anything
 builder.Services.AddCors(options =>

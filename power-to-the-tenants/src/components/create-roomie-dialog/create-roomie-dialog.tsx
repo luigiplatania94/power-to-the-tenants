@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
 import { createRoomieDTO } from "../../DTOs/createRoomieDTO.ts";
-import {createRoomie} from "../../services/roomie-service.ts";
+import {createRoomie, fetchAllTraits} from "../../services/roomie-service.ts";
+import SelectTraits from "../select-traits/select-traits.tsx";
 
 interface CreateRoomieDialogProps {
     isOpen: boolean;
@@ -14,9 +15,24 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
     const [form, setForm] = useState<createRoomieDTO>({
         profileImage: '',
         description: '',
-        attributes: [],
+        traits: [],
     });
 
+    const [allTraits, setAllTraits] = useState<string[]>([]);
+
+    useEffect(() => {
+        const fetchTraits = async () => {
+            try {
+                const traits = await fetchAllTraits();
+                setAllTraits(traits.map((trait) => trait.name));
+            } catch (error) {
+                console.error('Error fetching traits:', error);
+            }
+        };
+
+        fetchTraits();
+    }, []);
+    
     const handleCreateRoomie = () => {
         createRoomie(form)
             .then(() => {
@@ -49,19 +65,10 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
                 />
-                <TextField
-                    label="Attributes"
-                    margin="normal"
-                    variant="outlined"
-                    fullWidth
-                    value={form.attributes.join(', ')}
-                    // TODO fix attributes
-                    // onChange={(e) => setForm({
-                    //     ...form,
-                    //     attributes: e.target.value
-                    //         .split(',')
-                    //         .map((attribute) => attribute.trim()),
-                    // })}
+                <SelectTraits
+                    selectedTraits={form.traits}
+                    allTraits={allTraits} // Provide your list of traits here
+                    handleChange={(selectedTraits) => setForm({ ...form, traits: selectedTraits })}
                 />
             </DialogContent>
             <DialogActions>

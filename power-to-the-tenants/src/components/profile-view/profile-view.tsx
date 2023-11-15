@@ -1,5 +1,5 @@
 import {SetStateAction, useEffect, useState} from 'react';
-import { fetchRoomie, updateRoomie} from '../../services/roomie-service';
+import {fetchAllTraits, fetchRoomie, updateRoomie, updateRoomieTraits} from '../../services/roomie-service';
 import './profile-view.css';
 import {
     Alert,
@@ -15,6 +15,7 @@ import {Roomie} from "../../models/roomie.ts";
 import {Link, useParams} from "react-router-dom";
 import {Controller, useForm} from "react-hook-form";
 import DeleteRoomieDialog from "../delete-roomie-dialog/delete-roomie-dialog.tsx";
+import SelectTraits from "../select-traits/select-traits.tsx";
 
 export function ProfileView() {
 
@@ -30,18 +31,35 @@ export function ProfileView() {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     
     const isSmallScreen = useMediaQuery('(max-width:600px)');
+
+    const [selectedTraits, setSelectedTraits] = useState<string[]>([]);
+    const [allTraits, setAllTraits] = useState<string[]>([]);
     
-    const { register, 
+    const { register,
             handleSubmit,
             control,
             formState: { }
     } = useForm();
 
+    useEffect(() => {
+        const fetchTraits = async () => {
+            try {
+                const traits = await fetchAllTraits();
+                setAllTraits(traits.map((trait) => trait.name));
+            } catch (error) {
+                console.error('Error fetching traits:', error);
+            }
+        };
+
+        fetchTraits();
+    }, []);
+
     // fetch roomie data when the page loads for the first time
     useEffect(() => {
         fetchRoomie(id).then(response => {
-            // Assuming the API returns an object with a 'newValue' property
             setRoomie(response);
+            //TODO setSelectedTraits should have a different name. Here is with no context.
+            setSelectedTraits(response?.traits?.map((trait) => trait.name) || []);
         })
             .catch(error => {
                 console.error("Error fetching roomie:", error);
@@ -60,44 +78,36 @@ export function ProfileView() {
     const handleConfirmDelete = () => {
         setIsDeleteDialogOpen(false);
     };
-    
-    function handleDeleteAttribute(index : number) {
-        if (roomie) {
-            const updatedRoomie: Roomie = {
-                ...roomie,
-            };
-            if (updatedRoomie.attributes != null)
-            {
-                updatedRoomie.attributes.splice(index, 1);
-                updateRoomie(updatedRoomie).then(() => {
-                    setRoomie(updatedRoomie);
-                })
-            }
-        }
-    }
-    
+
+    const handleChange = (selectedTraits: string[]) => {
+        setSelectedTraits(selectedTraits);
+    };
+
     
     return (
+        <div className ={"profile-view"}>
             <Grid container rowSpacing={{ xs: 2, sm: 3, md: 3, lg: 7 }}>
                 
                 {/* Profile Image */}
                 <Grid item lg={12} xs={12 }>
                         <img className={"profile-image"} src={roomie && roomie.profileImage} alt="" />
                         {isEditing && (
-                            <form onSubmit={handleSubmit((data ) => {
+                            <form onSubmit={handleSubmit(async (data ) => {
                                 if (roomie) {
-                                    const updatedRoomie: Roomie = {
-                                        ...roomie,
+                                    const updatedRoomieDTO = {
                                         profileImage: data.imageLink,
+                                        description: roomie?.description || '',
                                     };
-                                    updateRoomie(updatedRoomie).then(() => {
-                                      setRoomie(updatedRoomie);
-                                      openSnackbar("Profile image updated succesfully", "success");
-                                    })
-                                    .catch(error => {
-                                        console.error("Error updating roomie's profile link:", error);
-                                        openSnackbar("Profile image failed to update", "error");
-                                    });
+
+                                    updateRoomie(roomie.id, updatedRoomieDTO)
+                                        .then((updatedRoomie) => {
+                                            setRoomie(updatedRoomie);
+                                            openSnackbar("Profile image updated successfully", "success");
+                                        })
+                                        .catch((error) => {
+                                            console.error("Error updating roomie's profile link:", error);
+                                            openSnackbar("Profile image failed to update", "error");
+                                        });
                                 }
                             })}>
                                 <div>
@@ -121,16 +131,17 @@ export function ProfileView() {
                 {/* Description */}
                 <Grid item lg={12} xs={12}>
                     {isEditing ? (
-                        <form onSubmit={handleSubmit((data ) => {
+                        <form onSubmit={handleSubmit(async (data ) => {
                             if (roomie) {
-                                const updatedRoomie: Roomie = {
-                                    ...roomie,
+                                const updatedRoomieDTO = {
+                                    profileImage: roomie?.profileImage || '',
                                     description: data.editedDescription,
                                 };
-                                updateRoomie(updatedRoomie)
-                                    .then(() => {
+
+                                updateRoomie(roomie.id, updatedRoomieDTO)
+                                    .then((updatedRoomie) => {
                                         setRoomie(updatedRoomie);
-                                        openSnackbar("Description updated succesfully", "success");
+                                        openSnackbar("Description updated successfully", "success");
                                     })
                                     .catch((error) => {
                                         console.error("Error updating roomie's description:", error);
@@ -148,15 +159,15 @@ export function ProfileView() {
                                         <TextField
                                             {...field}
                                             multiline
-                                            fullWidth
                                             id="standard-multiline-static"
                                             label="Multiline"
-                                            minRows={3}
+                                            minRows={5}
                                             maxRows={10}
                                             size={isSmallScreen ? 'small' : 'medium'}
                                             variant="outlined"
                                             margin="normal"
-                                            className={'input-description'}
+                                            className={"input-description"}
+                                            style={{ width: '50%' }}
                                         />
                                     )}
                                 />
@@ -168,7 +179,7 @@ export function ProfileView() {
                                 color="success"
                                 className={'button-update animation'}
                             >
-                                Save
+                                Update
                             </Button>
                         </form>
                     ) : (
@@ -176,46 +187,53 @@ export function ProfileView() {
                     )}
                 </Grid>
                 
-                {/* Attributes */}
+                {/* Traits */}
                 <Grid item lg={12} xs={12}>
+                    {!isEditing && (
                         <div>
-                            {roomie?.attributes && roomie.attributes.map((attribute, index) => (
-                                <Chip className={"attribute"}  key = {index} label = {attribute.name} onDelete={isEditing ? () => handleDeleteAttribute(index) : undefined} size={isSmallScreen ? "small" : "medium"}></Chip>
+                            {roomie?.traits && roomie.traits.map((attribute, index) => (
+                                <Chip className={"attribute"}  key = {index} label = {attribute.name} size={isSmallScreen ? "small" : "medium"}></Chip>
                             ))}
                         </div>
-                        
-                        {isEditing && (
+                    )}
+
+                    {isEditing && (
+                        <div>
                         <form onSubmit={handleSubmit((data ) => {
-                            if (roomie && roomie.attributes != null) {
-                                const updatedRoomie: Roomie = {
-                                    ...roomie, 
-                                    attributes: [...roomie.attributes, data.attributeName],
-                                };
-                                updateRoomie(updatedRoomie).then(() => {
-                                    setRoomie(updatedRoomie);
-                                    openSnackbar("Attributes updated succesfully", "success");
-                                })
-                                .catch(error => {
-                                    console.error("Error adding new roomie's attribute name:", error);
-                                    openSnackbar("Attributes failed to update", "error");
+                            // todo if you don't need the data maybe you don't need the form.
+                            console.log(data);
+                            updateRoomieTraits(selectedTraits, roomie?.id)                                    
+                                .then((r) => {
+                                setRoomie(r);
+                                openSnackbar("Traits updated succesfully", "success");
+                            })
+                                .catch((error) => {
+                                    console.error("Error updating roomie's traits:", error);
+                                    openSnackbar("Traits failed to update", "error");
                                 });
-                            }
                         })}>
+
+                            <SelectTraits
+                                selectedTraits={selectedTraits}
+                                allTraits={allTraits}
+                                handleChange={handleChange}
+                                isSmallScreen={isSmallScreen}
+                            />
+                            
                             <div>
-                                <TextField
-                                    size={isSmallScreen ? "small" : "medium"}
-                                    label="Attribute Name"
-                                    margin ="normal"
-                                    variant="outlined"
-                                    className={"input-attribute"}
-                                    {...register("attributeName")}
-                                />
-                            </div>
-                            <div>
-                                <Button type="submit" size={isSmallScreen ? "small" : "large"} variant="contained" color="success" className ={"button-attribute button-update animation"}>Add</Button>
+                                <Button
+                                    type="submit"
+                                    size={isSmallScreen ? 'small' : 'large'}
+                                    variant="contained"
+                                    color="success"
+                                    className={'button-attribute button-update animation'}
+                                >
+                                    Update
+                                </Button>
                             </div>
                         </form>
-                        )}
+                        </div>
+                    )}
 
                 </Grid>
 
@@ -259,5 +277,6 @@ export function ProfileView() {
                 />
                 
             </Grid>
+        </div>
     )
 }

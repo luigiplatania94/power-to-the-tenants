@@ -35,7 +35,6 @@ public class RoomieService : IRoomieService
     
     public async Task DeleteRoomie(Guid id)
     {
-        // TODO this should return a task?
         await _roomieRepository.DeleteRoomie(id);
     }
     

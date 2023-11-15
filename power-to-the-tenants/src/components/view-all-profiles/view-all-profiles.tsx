@@ -56,7 +56,7 @@ function ViewAllProfiles() {
     };
     
     
-    // Creae roomie logic
+    // Create roomie logic
     const handleConfirmCreate = () => {
         fetchAndSetRoomies();
         setIsCreateDialogOpen(false);
@@ -72,7 +72,7 @@ function ViewAllProfiles() {
                             <TableRow>
                                 <TableCell>Image</TableCell>
                                 <TableCell>Description</TableCell>
-                                <TableCell>Attributes</TableCell>
+                                <TableCell>Traits</TableCell>
                                 <TableCell>Buttons</TableCell>
                             </TableRow>
                         </TableHead>
@@ -88,7 +88,7 @@ function ViewAllProfiles() {
                                     </TableCell>
                                     <TableCell>{roomie.description}</TableCell>
                                     <TableCell>
-                                        {roomie.attributes && roomie.attributes.map((attribute, index) => (
+                                        {roomie.traits && roomie.traits.map((attribute, index) => (
                                             <Chip className={"attribute"} key = {index} label = {attribute.name}></Chip>
                                         ))}
                                     </TableCell>

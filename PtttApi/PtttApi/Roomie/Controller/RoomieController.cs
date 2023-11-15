@@ -31,7 +31,6 @@ public class RoomieController : ControllerBase
         var roomies = await _roomieService.GetAllRoomies();
         return Ok(roomies);
     }
-
     
 
     [HttpPost]
