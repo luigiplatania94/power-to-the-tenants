@@ -3,6 +3,7 @@ using PtttApi.Db;
 using PtttApi.Db.Entities;
 using PtttApi.Domain;
 using PtttApi.Exceptions;
+using PtttApi.Trait.DTOs;
 
 namespace PtttApi.Repositories;
 
@@ -28,12 +29,13 @@ public class RoomieRepository : IRoomieRepository
 
     public async Task<RoomieEntity> CreateRoomie(CreateRoomieDTO roomie)
     {
+        
         var newRoomie = new RoomieEntity
         {
             ProfileImage = roomie.ProfileImage,
             Description = roomie.Description,
 
-            Traits = roomie.Traits.Select(attr => new TraitEntity(attr.Id, attr.Name)).ToList()
+            Traits = await GetTraitEntitiesFromNames(roomie.Traits),
         };
         
         _tenantContext.Roomies.Add(newRoomie);
@@ -41,6 +43,18 @@ public class RoomieRepository : IRoomieRepository
         await _tenantContext.SaveChangesAsync();
 
         return newRoomie;
+    }
+
+    private async Task<List<TraitEntity>> GetTraitEntitiesFromNames(List<CreateRoomieTraitDTO> names)
+    {
+        var traitEntities = new List<TraitEntity>();
+        foreach (var updateTrait in names)
+        {
+            var traitEntity = await _tenantContext.Traits.FirstOrDefaultAsync(t => t.TraitName == updateTrait.TraitName);
+            traitEntities.Add(traitEntity);
+        }
+
+        return traitEntities;
     }
 
 

@@ -83,6 +83,7 @@ export function ProfileView() {
     };
     
     return (
+        <div className ={"profile-view"}>
             <Grid container rowSpacing={{ xs: 2, sm: 3, md: 3, lg: 7 }}>
                 
                 {/* Profile Image */}
@@ -156,15 +157,15 @@ export function ProfileView() {
                                         <TextField
                                             {...field}
                                             multiline
-                                            fullWidth
                                             id="standard-multiline-static"
                                             label="Multiline"
-                                            minRows={3}
+                                            minRows={5}
                                             maxRows={10}
                                             size={isSmallScreen ? 'small' : 'medium'}
                                             variant="outlined"
                                             margin="normal"
-                                            className={'input-description'}
+                                            className={"input-description"}
+                                            style={{ width: '50%' }}
                                         />
                                     )}
                                 />
@@ -210,7 +211,7 @@ export function ProfileView() {
                                 });
                         })}>
                         
-                            <FormControl fullWidth variant="outlined" size={isSmallScreen ? 'small' : 'medium'}>
+                            <FormControl margin ="normal" variant="outlined" size={isSmallScreen ? 'small' : 'medium'}>
                                 <InputLabel id="traits-label">Traits</InputLabel>
                                 <Select
                                     defaultValue={roomie?.traits?.map((trait) => trait.name) || []}
@@ -234,15 +235,17 @@ export function ProfileView() {
                                     ))}
                                 </Select>
                             </FormControl>
-                            <Button
-                                type="submit"
-                                size={isSmallScreen ? 'small' : 'large'}
-                                variant="contained"
-                                color="success"
-                                className={'button-attribute button-update animation'}
-                            >
-                                Update
-                            </Button>
+                            <div>
+                                <Button
+                                    type="submit"
+                                    size={isSmallScreen ? 'small' : 'large'}
+                                    variant="contained"
+                                    color="success"
+                                    className={'button-attribute button-update animation'}
+                                >
+                                    Update
+                                </Button>
+                            </div>
                         </form>
                         </div>
                     )}
@@ -289,5 +292,6 @@ export function ProfileView() {
                 />
                 
             </Grid>
+        </div>
     )
 }

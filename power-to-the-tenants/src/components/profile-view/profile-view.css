@@ -1,3 +1,9 @@
+.profile-view {
+  background: linear-gradient(to right top, #eee04f, #f4db72, #f4d892, #eed7b0, #e0d8ce);
+  height: 100vh; 
+  overflow: hidden;  /* Hide the scroll bars */
+}
+
 .button-update.animation {
   animation: wiggleAnimation 0.5s infinite; 
   animation-duration: 300ms;
@@ -8,6 +14,7 @@
   margin-top: 1rem;
   width: 200px; 
   height: auto; 
+  max-height: 200px;
   border-radius: 30px;
 }
 
@@ -15,9 +22,14 @@
   font-size: 18px;
 }
 
+.input-description{
+  padding-left: 15rem;
+}
+
 .attribute {
   margin : 0.3rem;  
 }
+
 
 @media (max-width: 425px) {
   .profile-image {

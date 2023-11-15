@@ -72,7 +72,7 @@ function ViewAllProfiles() {
                             <TableRow>
                                 <TableCell>Image</TableCell>
                                 <TableCell>Description</TableCell>
-                                <TableCell>Attributes</TableCell>
+                                <TableCell>Traits</TableCell>
                                 <TableCell>Buttons</TableCell>
                             </TableRow>
                         </TableHead>
