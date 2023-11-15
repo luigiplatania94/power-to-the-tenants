@@ -62,8 +62,8 @@ export async function createRoomie(roomieDTO: createRoomieDTO) {
         return data;
     }
 
-    catch (error) {
-        console.error('Error creating roomie:', error);
+    catch (error : any) {
+        console.error('Error creating roomie:', error.response);
         throw error;
     }
 }

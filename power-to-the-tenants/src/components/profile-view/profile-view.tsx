@@ -3,10 +3,10 @@ import {fetchAllTraits, fetchRoomie, updateRoomie, updateRoomieTraits} from '../
 import './profile-view.css';
 import {
     Alert,
-    AlertColor, Box,
+    AlertColor,
     Button,
-    Chip, FormControl,
-    Grid, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent,
+    Chip,
+    Grid,
     Snackbar,
     TextField,
     useMediaQuery
@@ -15,6 +15,7 @@ import {Roomie} from "../../models/roomie.ts";
 import {Link, useParams} from "react-router-dom";
 import {Controller, useForm} from "react-hook-form";
 import DeleteRoomieDialog from "../delete-roomie-dialog/delete-roomie-dialog.tsx";
+import SelectTraits from "../select-traits/select-traits.tsx";
 
 export function ProfileView() {
 
@@ -56,8 +57,8 @@ export function ProfileView() {
     // fetch roomie data when the page loads for the first time
     useEffect(() => {
         fetchRoomie(id).then(response => {
-            // Assuming the API returns an object with a 'newValue' property
             setRoomie(response);
+            //TODO setSelectedTraits should have a different name. Here is with no context.
             setSelectedTraits(response?.traits?.map((trait) => trait.name) || []);
         })
             .catch(error => {
@@ -78,9 +79,10 @@ export function ProfileView() {
         setIsDeleteDialogOpen(false);
     };
 
-    const handleChange = (event: SelectChangeEvent<typeof selectedTraits>) => {
-        setSelectedTraits(event.target.value as string[]);
+    const handleChange = (selectedTraits: string[]) => {
+        setSelectedTraits(selectedTraits);
     };
+
     
     return (
         <div className ={"profile-view"}>
@@ -210,31 +212,14 @@ export function ProfileView() {
                                     openSnackbar("Traits failed to update", "error");
                                 });
                         })}>
-                        
-                            <FormControl margin ="normal" variant="outlined" size={isSmallScreen ? 'small' : 'medium'}>
-                                <InputLabel id="traits-label">Traits</InputLabel>
-                                <Select
-                                    defaultValue={roomie?.traits?.map((trait) => trait.name) || []}
-                                    labelId="traits-label"
-                                    id="traits-select"
-                                    multiple
-                                    onChange={handleChange}
-                                    input={<OutlinedInput label="Traits" />}
-                                    renderValue={(selected) => (
-                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                            {selected.map((value) => (
-                                                <Chip key={value} label={value} />
-                                            ))}
-                                        </Box>
-                                    )}
-                                >
-                                    {allTraits.map((trait) => (
-                                        <MenuItem key={trait} value={trait}>
-                                            {trait}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
+
+                            <SelectTraits
+                                selectedTraits={selectedTraits}
+                                allTraits={allTraits}
+                                handleChange={handleChange}
+                                isSmallScreen={isSmallScreen}
+                            />
+                            
                             <div>
                                 <Button
                                     type="submit"

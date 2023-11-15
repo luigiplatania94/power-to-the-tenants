@@ -45,12 +45,12 @@ public class RoomieRepository : IRoomieRepository
         return newRoomie;
     }
 
-    private async Task<List<TraitEntity>> GetTraitEntitiesFromNames(List<CreateRoomieTraitDTO> names)
+    private async Task<List<TraitEntity>> GetTraitEntitiesFromNames(List<string> names)
     {
         var traitEntities = new List<TraitEntity>();
         foreach (var updateTrait in names)
         {
-            var traitEntity = await _tenantContext.Traits.FirstOrDefaultAsync(t => t.TraitName == updateTrait.TraitName);
+            var traitEntity = await _tenantContext.Traits.FirstOrDefaultAsync(t => t.TraitName == updateTrait);
             traitEntities.Add(traitEntity);
         }
 
