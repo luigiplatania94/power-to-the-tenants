@@ -1,7 +1,7 @@
 .profile-view {
   background: linear-gradient(to right top, #eee04f, #f4db72, #f4d892, #eed7b0, #e0d8ce);
   height: 100vh; 
-  overflow: hidden;  /* Hide the scroll bars */
+  overflow: hidden;
 }
 
 .button-update.animation {

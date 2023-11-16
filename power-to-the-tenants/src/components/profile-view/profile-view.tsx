@@ -32,6 +32,7 @@ export function ProfileView() {
     
     const isSmallScreen = useMediaQuery('(max-width:600px)');
 
+    const [roomieTraits, setRoomieTraits] = useState<string[]>([]);
     const [selectedTraits, setSelectedTraits] = useState<string[]>([]);
     const [allTraits, setAllTraits] = useState<string[]>([]);
     
@@ -58,8 +59,7 @@ export function ProfileView() {
     useEffect(() => {
         fetchRoomie(id).then(response => {
             setRoomie(response);
-            //TODO setSelectedTraits should have a different name. Here is with no context.
-            setSelectedTraits(response?.traits?.map((trait) => trait.name) || []);
+            setRoomieTraits(response?.traits?.map((trait) => trait.name) || []);
         })
             .catch(error => {
                 console.error("Error fetching roomie:", error);
@@ -214,7 +214,7 @@ export function ProfileView() {
                         })}>
 
                             <SelectTraits
-                                selectedTraits={selectedTraits}
+                                defaultTraits={roomieTraits}
                                 allTraits={allTraits}
                                 handleChange={handleChange}
                                 isSmallScreen={isSmallScreen}

@@ -66,8 +66,7 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
                 />
                 <SelectTraits
-                    selectedTraits={form.traits}
-                    allTraits={allTraits} // Provide your list of traits here
+                    allTraits={allTraits} 
                     handleChange={(selectedTraits) => setForm({ ...form, traits: selectedTraits })}
                 />
             </DialogContent>
