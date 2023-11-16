@@ -2,18 +2,18 @@ import React from 'react';
 import { Box, Chip, FormControl, InputLabel, MenuItem, OutlinedInput, Select } from '@mui/material';
 
 interface TraitsSelectProps {
-    selectedTraits: string[];
+    defaultTraits?: string[];
     allTraits: string[];
     handleChange: (selectedTraits: string[]) => void; // Update this line
     isSmallScreen?: boolean;
 }
 
-const SelectTraits: React.FC<TraitsSelectProps> = ({ selectedTraits, allTraits, handleChange, isSmallScreen }) => {
+const SelectTraits: React.FC<TraitsSelectProps> = ({ defaultTraits, allTraits, handleChange, isSmallScreen }) => {
     return (
         <FormControl margin="normal" variant="outlined" size={isSmallScreen ? 'small' : 'medium'}>
             <InputLabel id="traits-label">Traits</InputLabel>
             <Select
-                value={selectedTraits}
+                defaultValue={defaultTraits || allTraits.slice(0, 2)}
                 labelId="traits-label"
                 id="traits-select"
                 multiple
