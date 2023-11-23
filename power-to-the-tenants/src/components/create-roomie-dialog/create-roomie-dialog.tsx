@@ -20,6 +20,12 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
 
     const [allTraits, setAllTraits] = useState<string[]>([]);
 
+    const [validation, setValidation] = useState({
+        profileImage: true,
+        description: true,
+        traits: true,
+    });
+    
     useEffect(() => {
         const fetchTraits = async () => {
             try {
@@ -32,18 +38,41 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
 
         fetchTraits();
     }, []);
+
+    const resetValidation = () => {
+        setValidation({
+            profileImage: true,
+            description: true,
+            traits: true,
+        });
+    };
     
     const handleCreateRoomie = () => {
-        createRoomie(form)
-            .then(() => {
-                // Notify the parent component that roomie is created
-                onConfirmCreate();
-                onClose();
-            })
-            .catch((error) => {
-                console.error('Error creating roomie:', error);
-            });
+        // Validation checks
+        const isProfileImageValid = form.profileImage.trim() !== '';
+        const isDescriptionValid = form.description.trim() !== '';
+        const isTraitsValid = form.traits.length > 0;
+
+        setValidation({
+            profileImage: isProfileImageValid,
+            description: isDescriptionValid,
+            traits: isTraitsValid,
+        });
+
+        // If all validations pass, proceed with creating the roomie
+        if (isProfileImageValid && isDescriptionValid && isTraitsValid) {
+            createRoomie(form)
+                .then(() => {
+                    // Notify the parent component that roomie is created
+                    onConfirmCreate();
+                    onClose();
+                })
+                .catch((error) => {
+                    console.error('Error creating roomie:', error);
+                });
+        }
     };
+
 
     return (
         <Dialog open={isOpen} onClose={onClose} maxWidth="sm">
@@ -56,6 +85,8 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                     fullWidth
                     value={form.profileImage}
                     onChange={(e) => setForm({ ...form, profileImage: e.target.value })}
+                    error={!validation.profileImage}
+                    helperText={!validation.profileImage && "Profile image is required."}
                 />
                 <TextField
                     label="Description"
@@ -64,14 +95,18 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                     fullWidth
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    error={!validation.description}
+                    helperText={!validation.description && "Description is required."}
                 />
                 <SelectTraits
                     allTraits={allTraits} 
                     handleChange={(selectedTraits) => setForm({ ...form, traits: selectedTraits })}
+                    error={!validation.traits}
+                    helperText={!validation.traits && "At least one trait is required."}
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={() => { onClose(); resetValidation();}}>Cancel</Button>
                 <Button onClick={handleCreateRoomie} color="success">
                     Create
                 </Button>
