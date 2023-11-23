@@ -22,7 +22,7 @@ const SelectTraits: React.FC<TraitsSelectProps> = ({
         <FormControl margin="normal" variant="outlined" size={isSmallScreen ? 'small' : 'medium'} error={error}>
             <InputLabel id="traits-label">Traits</InputLabel>
             <Select
-                defaultValue={defaultTraits || allTraits.slice(0, 2)}
+                defaultValue={defaultTraits || allTraits.slice(0, 3)}
                 labelId="traits-label"
                 id="traits-select"
                 multiple

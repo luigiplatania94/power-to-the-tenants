@@ -4,6 +4,11 @@ import { createRoomieDTO } from "../../DTOs/createRoomieDTO.ts";
 import {createRoomie, fetchAllTraits} from "../../services/roomie-service.ts";
 import SelectTraits from "../select-traits/select-traits.tsx";
 
+const MIN_DESCRIPTION_LENGTH = 10;
+const MAX_DESCRIPTION_LENGTH = 300;
+const MIN_TRAITS_COUNT = 3;
+const MAX_TRAITS_COUNT = 8;
+
 interface CreateRoomieDialogProps {
     isOpen: boolean;
     onClose: () => void;
@@ -11,6 +16,12 @@ interface CreateRoomieDialogProps {
 }
 
 const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose, onConfirmCreate }) => {
+
+    const isValidUrl = (url: string) => {
+        // Regular expression for a simple URL validation
+        const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+        return urlRegex.test(url);
+    };
     
     const [form, setForm] = useState<createRoomieDTO>({
         profileImage: '',
@@ -45,13 +56,22 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
             description: true,
             traits: true,
         });
+        setForm({        
+            profileImage: '',
+            description: '',
+            traits: [],
+        })
     };
     
     const handleCreateRoomie = () => {
         // Validation checks
-        const isProfileImageValid = form.profileImage.trim() !== '';
-        const isDescriptionValid = form.description.trim() !== '';
-        const isTraitsValid = form.traits.length > 0;
+        const isProfileImageValid = form.profileImage.trim() !== '' && isValidUrl(form.profileImage.trim());
+        const isDescriptionValid = form.description.trim().length >= MIN_DESCRIPTION_LENGTH && form.description.trim().length <= MAX_DESCRIPTION_LENGTH;
+        
+
+        const isMinTraitsValid = form.traits.length >= MIN_TRAITS_COUNT;
+        const isMaxTraitsValid = form.traits.length <= MAX_TRAITS_COUNT;
+        const isTraitsValid = isMinTraitsValid && isMaxTraitsValid;
 
         setValidation({
             profileImage: isProfileImageValid,
@@ -86,7 +106,11 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                     value={form.profileImage}
                     onChange={(e) => setForm({ ...form, profileImage: e.target.value })}
                     error={!validation.profileImage}
-                    helperText={!validation.profileImage && "Profile image is required."}
+                    helperText={
+                        !validation.profileImage &&
+                        ((form.profileImage.trim() === '' && "Profile image is required.") ||
+                            (!isValidUrl(form.profileImage.trim()) && "Invalid URL. Please enter a valid URL."))
+                    }
                 />
                 <TextField
                     label="Description"
@@ -96,13 +120,17 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
                     error={!validation.description}
-                    helperText={!validation.description && "Description is required."}
+                    helperText={!validation.description &&                     
+                        ((form.description.length <= MIN_DESCRIPTION_LENGTH && `Description must be at least ${MIN_DESCRIPTION_LENGTH} characters.`) ||
+                            (form.description.length >= MAX_DESCRIPTION_LENGTH && `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters.`))}
                 />
                 <SelectTraits
                     allTraits={allTraits} 
                     handleChange={(selectedTraits) => setForm({ ...form, traits: selectedTraits })}
                     error={!validation.traits}
-                    helperText={!validation.traits && "At least one trait is required."}
+                    helperText={ !validation.traits &&
+                        ((form.traits.length < MIN_TRAITS_COUNT && `Select at least ${MIN_TRAITS_COUNT} traits.`) ||
+                            (form.traits.length > MAX_TRAITS_COUNT && `You cannot select more than ${MAX_TRAITS_COUNT} traits.`))}
                 />
             </DialogContent>
             <DialogActions>
