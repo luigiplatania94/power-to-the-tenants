@@ -17,6 +17,7 @@ interface CreateRoomieDialogProps {
 
 const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose, onConfirmCreate }) => {
 
+    // TODO this can be a utility function. It's used in different places
     const isValidUrl = (url: string) => {
         // Regular expression for a simple URL validation
         const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
@@ -50,17 +51,20 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
         fetchTraits();
     }, []);
 
-    const resetValidation = () => {
-        setValidation({
-            profileImage: true,
-            description: true,
-            traits: true,
+    const resetValidation = (field: string | undefined = undefined) => {
+        setValidation((prevValidation) => {
+            // If a specific field is provided, reset only that field; otherwise, reset all fields
+            if (field) {
+                return { ...prevValidation, [field]: true };
+            } 
+            else {
+                return {
+                    profileImage: true,
+                    description: true,
+                    traits: true,
+                };
+            }
         });
-        setForm({        
-            profileImage: '',
-            description: '',
-            traits: [],
-        })
     };
     
     const handleCreateRoomie = () => {
@@ -78,14 +82,18 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
             description: isDescriptionValid,
             traits: isTraitsValid,
         });
-
-        // If all validations pass, proceed with creating the roomie
+        
         if (isProfileImageValid && isDescriptionValid && isTraitsValid) {
             createRoomie(form)
                 .then(() => {
                     // Notify the parent component that roomie is created
                     onConfirmCreate();
                     onClose();
+                    setForm({
+                        profileImage: '',
+                        description: '',
+                        traits: [],
+                    });
                 })
                 .catch((error) => {
                     console.error('Error creating roomie:', error);
@@ -104,7 +112,10 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                     variant="outlined"
                     fullWidth
                     value={form.profileImage}
-                    onChange={(e) => setForm({ ...form, profileImage: e.target.value })}
+                    onChange={(e) => {
+                        setForm({ ...form, profileImage: e.target.value });
+                        resetValidation('profileImage');
+                    }}
                     error={!validation.profileImage}
                     helperText={
                         !validation.profileImage &&
@@ -118,7 +129,10 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                     variant="outlined"
                     fullWidth
                     value={form.description}
-                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    onChange={(e) => {
+                        setForm({ ...form, description: e.target.value });
+                        resetValidation('description');
+                    }}
                     error={!validation.description}
                     helperText={!validation.description &&                     
                         ((form.description.length <= MIN_DESCRIPTION_LENGTH && `Description must be at least ${MIN_DESCRIPTION_LENGTH} characters.`) ||
@@ -126,7 +140,10 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                 />
                 <SelectTraits
                     allTraits={allTraits} 
-                    handleChange={(selectedTraits) => setForm({ ...form, traits: selectedTraits })}
+                    handleChange={(selectedTraits) => {
+                        setForm({ ...form, traits: selectedTraits });
+                        resetValidation('traits')
+                    }}
                     error={!validation.traits}
                     helperText={ !validation.traits &&
                         ((form.traits.length < MIN_TRAITS_COUNT && `Select at least ${MIN_TRAITS_COUNT} traits.`) ||
@@ -134,7 +151,19 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => { onClose(); resetValidation();}}>Cancel</Button>
+                <Button 
+                    //TODO should this be moved to a function?
+                    onClick={() => { 
+                        onClose(); 
+                        resetValidation(); 
+                        setForm({
+                            profileImage: '',
+                            description: '',
+                            traits: [],
+                        }); 
+                    }}
+                >Cancel</Button>
+                // TODO I should use mui form like profile view.
                 <Button onClick={handleCreateRoomie} color="success">
                     Create
                 </Button>
