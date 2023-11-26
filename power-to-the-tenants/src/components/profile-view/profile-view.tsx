@@ -16,6 +16,12 @@ import {Link, useParams} from "react-router-dom";
 import DeleteRoomieDialog from "../delete-roomie-dialog/delete-roomie-dialog.tsx";
 import SelectTraits from "../select-traits/select-traits.tsx";
 
+
+const MIN_DESCRIPTION_LENGTH = 10;
+const MAX_DESCRIPTION_LENGTH = 300;
+// const MIN_TRAITS_COUNT = 3;
+// const MAX_TRAITS_COUNT = 8;
+
 export function ProfileView() {
 
     const {id} = useParams();
@@ -41,6 +47,28 @@ export function ProfileView() {
         description: '',
     });
 
+    const [validation, setValidation] = useState({
+        profileImage: true,
+        description: true,
+        traits: true,
+    });
+
+    const resetValidation = (field: string | undefined = undefined) => {
+        setValidation((prevValidation) => {
+            // If a specific field is provided, reset only that field; otherwise, reset all fields
+            if (field) {
+                return { ...prevValidation, [field]: true };
+            }
+            else {
+                return {
+                    profileImage: true,
+                    description: true,
+                    traits: true,
+                };
+            }
+        });
+    };
+    
     const handleProfileImageChange = (e: { target: { value: any; }; }) => {
         setForm({
             ...form,
@@ -54,6 +82,7 @@ export function ProfileView() {
             ...form,
             description: e.target.value,
         });
+        resetValidation('description');
     };
 
     const handleTraitsChange = (selectedTraits: string[]) => {
@@ -89,17 +118,29 @@ export function ProfileView() {
                 profileImage: roomie?.profileImage || '',
                 description: form.description,
             };
+
+            const isDescriptionValid = updatedRoomieDTO.description.trim().length >= MIN_DESCRIPTION_LENGTH && updatedRoomieDTO.description.trim().length <= MAX_DESCRIPTION_LENGTH;
             
+            setValidation({
+                ...validation,
+                description: isDescriptionValid,
+            });
+
             // TODO this can be a function
-            updateRoomie(roomie.id, updatedRoomieDTO)
-                .then((updatedRoomie) => {
-                    setRoomie(updatedRoomie);
-                    openSnackbar("Description updated successfully", "success");
-                })
-                .catch((error) => {
-                    console.error("Error updating roomie's description:", error);
-                    openSnackbar("Description failed to update", "error");
-                });
+            if(isDescriptionValid) {
+                updateRoomie(roomie.id, updatedRoomieDTO)
+                    .then((updatedRoomie) => {
+                        setRoomie(updatedRoomie);
+                        openSnackbar("Description updated successfully", "success");
+                    })
+                    .catch((error) => {
+                        console.error("Error updating roomie's description:", error);
+                        openSnackbar("Description failed to update", "error");
+                    });
+            }
+            else {
+                openSnackbar("Description failed to update", "error");
+            }
         }
     };
 
@@ -148,6 +189,9 @@ export function ProfileView() {
     
     const handleEditClick = () => {
         setIsEditing(!isEditing);
+        if(!isEditing){
+            resetValidation();
+        }
     };
     const openSnackbar = (message: SetStateAction<string>, severity: AlertColor) => {
         setSnackbarMessage(message);
@@ -193,14 +237,18 @@ export function ProfileView() {
                                     multiline
                                     id="standard-multiline-static"
                                     label="Multiline"
-                                    minRows={5}
-                                    maxRows={10}
+                                    minRows={3}
+                                    maxRows={5}
                                     size={isSmallScreen ? 'small' : 'medium'}
                                     variant="outlined"
                                     margin="normal"
                                     className={"input-description"}
                                     style={{ width: '50%' }}
                                     onChange={handleDescriptionChange}
+                                    error={!validation.description}
+                                    helperText={!validation.description &&
+                                        ((form.description.length <= MIN_DESCRIPTION_LENGTH && `Description must be at least ${MIN_DESCRIPTION_LENGTH} characters.`) ||
+                                            (form.description.length >= MAX_DESCRIPTION_LENGTH && `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters.`))}
                                 />
                             </div>
                             <Button
