@@ -42,6 +42,7 @@ export function ProfileView() {
     const [allTraits, setAllTraits] = useState<string[]>([]);
     
 
+    // TODO shall this have traits?
     const [form, setForm] = useState({
         profileImage: '',
         description: '',
