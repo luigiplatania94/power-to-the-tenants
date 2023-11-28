@@ -19,7 +19,6 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
 
     // TODO this can be a utility function. It's used in different places
     const isValidUrl = (url: string) => {
-        // Regular expression for a simple URL validation
         const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
         return urlRegex.test(url);
     };

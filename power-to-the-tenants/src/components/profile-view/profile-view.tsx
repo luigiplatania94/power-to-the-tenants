@@ -19,8 +19,8 @@ import SelectTraits from "../select-traits/select-traits.tsx";
 
 const MIN_DESCRIPTION_LENGTH = 10;
 const MAX_DESCRIPTION_LENGTH = 300;
-// const MIN_TRAITS_COUNT = 3;
-// const MAX_TRAITS_COUNT = 8;
+const MIN_TRAITS_COUNT = 3;
+const MAX_TRAITS_COUNT = 8;
 
 export function ProfileView() {
 
@@ -38,10 +38,15 @@ export function ProfileView() {
     const isSmallScreen = useMediaQuery('(max-width:600px)');
 
     const [roomieTraits, setRoomieTraits] = useState<string[]>([]);
+    // TODO is this redundant?
     const [selectedTraits, setSelectedTraits] = useState<string[]>([]);
     const [allTraits, setAllTraits] = useState<string[]>([]);
     
-
+    const isValidUrl = (url: string) => {
+        const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+        return urlRegex.test(url);
+    };
+    
     // TODO shall this have traits?
     const [form, setForm] = useState({
         profileImage: '',
@@ -75,6 +80,7 @@ export function ProfileView() {
             ...form,
             profileImage: e.target.value,
         });
+        resetValidation('profileImage');
     };
     
 
@@ -86,8 +92,10 @@ export function ProfileView() {
         resetValidation('description');
     };
 
+    //TODO this should be consistent with the other handleThingsChange
     const handleTraitsChange = (selectedTraits: string[]) => {
         setSelectedTraits(selectedTraits);
+        resetValidation('traits')
     };
 
     const handleProfileImageSubmit = (e: { preventDefault: () => void; }) => {
@@ -98,17 +106,25 @@ export function ProfileView() {
                 description: roomie?.description || '',
             };
 
+            const isProfileImageValid = form.profileImage.trim() !== '' && isValidUrl(form.profileImage.trim());
+
+            setValidation({
+                ...validation,
+                profileImage: isProfileImageValid,
+            });
             
             // TODO this can be a function
-            updateRoomie(roomie.id, updatedRoomieDTO)
-                .then((updatedRoomie) => {
-                    setRoomie(updatedRoomie);
-                    openSnackbar("Profile image updated successfully", "success");
-                })
-                .catch((error) => {
-                    console.error("Error updating roomie's profile link:", error);
-                    openSnackbar("Profile image failed to update", "error");
-                });
+            if(isProfileImageValid) {
+                updateRoomie(roomie.id, updatedRoomieDTO)
+                    .then((updatedRoomie) => {
+                        setRoomie(updatedRoomie);
+                        openSnackbar("Profile image updated successfully", "success");
+                    })
+                    .catch((error) => {
+                        console.error("Error updating roomie's profile link:", error);
+                        openSnackbar("Profile image failed to update", "error");
+                    });
+            }
         }
     };
 
@@ -147,16 +163,28 @@ export function ProfileView() {
 
     const handleTraitsSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
+        
         if (roomie) {
-            updateRoomieTraits(selectedTraits, roomie?.id)
-                .then((r) => {
-                    setRoomie(r);
-                    openSnackbar("Traits updated succesfully", "success");
-                })
-                .catch((error) => {
-                    console.error("Error updating roomie's traits:", error);
-                    openSnackbar("Traits failed to update", "error");
-                });
+            const isMinTraitsValid = selectedTraits.length >= MIN_TRAITS_COUNT;
+            const isMaxTraitsValid = selectedTraits.length <= MAX_TRAITS_COUNT;
+            const isTraitsValid = isMinTraitsValid && isMaxTraitsValid;
+
+            setValidation({
+                ...validation,
+                traits: isTraitsValid,
+            });
+            
+            if(isTraitsValid) {
+                updateRoomieTraits(selectedTraits, roomie?.id)
+                    .then((r) => {
+                        setRoomie(r);
+                        openSnackbar("Traits updated succesfully", "success");
+                    })
+                    .catch((error) => {
+                        console.error("Error updating roomie's traits:", error);
+                        openSnackbar("Traits failed to update", "error");
+                    });
+            }
         }
     };
 
@@ -217,6 +245,12 @@ export function ProfileView() {
                                         label = "Image link"
                                         margin ="normal"
                                         onChange={handleProfileImageChange}
+                                        error={!validation.profileImage}
+                                        helperText={
+                                            !validation.profileImage &&
+                                            ((form.profileImage.trim() === '' && "Profile image is required.") ||
+                                                (!isValidUrl(form.profileImage.trim()) && "Invalid URL. Please enter a valid URL."))
+                                        }
                                     />
                                 </div>
                                 <div>
@@ -279,30 +313,31 @@ export function ProfileView() {
 
                     {isEditing && (
                         <div>
-                        <form onSubmit={handleTraitsSubmit}>
-
-                            <SelectTraits
-                                defaultTraits={roomieTraits}
-                                allTraits={allTraits}
-                                handleChange={handleTraitsChange}
-                                isSmallScreen={isSmallScreen}
-                            />
-                            
-                            <div>
-                                <Button
-                                    type="submit"
-                                    size={isSmallScreen ? 'small' : 'large'}
-                                    variant="contained"
-                                    color="success"
-                                    className={'button-attribute button-update animation'}
-                                >
-                                    Update
-                                </Button>
-                            </div>
-                        </form>
+                            <form onSubmit={handleTraitsSubmit}>
+                                <SelectTraits
+                                    defaultTraits={roomieTraits}
+                                    allTraits={allTraits}
+                                    handleChange={handleTraitsChange}
+                                    isSmallScreen={isSmallScreen}
+                                    error={!validation.traits}
+                                    helperText={ !validation.traits &&
+                                        ((selectedTraits.length < MIN_TRAITS_COUNT && `Select at least ${MIN_TRAITS_COUNT} traits.`) ||
+                                            (selectedTraits.length > MAX_TRAITS_COUNT && `You cannot select more than ${MAX_TRAITS_COUNT} traits.`))}
+                                />
+                                <div>
+                                    <Button
+                                        type="submit"
+                                        size={isSmallScreen ? 'small' : 'large'}
+                                        variant="contained"
+                                        color="success"
+                                        className={'button-attribute button-update animation'}
+                                    >
+                                        Update
+                                    </Button>
+                                </div>
+                            </form>
                         </div>
                     )}
-
                 </Grid>
 
                 {/* Edit, Delete and Back Buttons */}
