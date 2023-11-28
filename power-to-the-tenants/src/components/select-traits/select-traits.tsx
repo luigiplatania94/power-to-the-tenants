@@ -1,19 +1,28 @@
 import React from 'react';
-import { Box, Chip, FormControl, InputLabel, MenuItem, OutlinedInput, Select } from '@mui/material';
+import {Box, Chip, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select} from '@mui/material';
 
 interface TraitsSelectProps {
     defaultTraits?: string[];
     allTraits: string[];
     handleChange: (selectedTraits: string[]) => void; // Update this line
     isSmallScreen?: boolean;
+    error?:boolean;
+    helperText?:React.ReactNode;
 }
 
-const SelectTraits: React.FC<TraitsSelectProps> = ({ defaultTraits, allTraits, handleChange, isSmallScreen }) => {
+const SelectTraits: React.FC<TraitsSelectProps> = ({ 
+       defaultTraits, 
+       allTraits, 
+       handleChange, 
+       isSmallScreen, 
+       error,
+       helperText,
+}) => {
     return (
-        <FormControl margin="normal" variant="outlined" size={isSmallScreen ? 'small' : 'medium'}>
+        <FormControl margin="normal" variant="outlined" size={isSmallScreen ? 'small' : 'medium'} error={error}>
             <InputLabel id="traits-label">Traits</InputLabel>
             <Select
-                defaultValue={defaultTraits || allTraits.slice(0, 2)}
+                defaultValue={defaultTraits || allTraits.slice(0, 3)}
                 labelId="traits-label"
                 id="traits-select"
                 multiple
@@ -33,6 +42,7 @@ const SelectTraits: React.FC<TraitsSelectProps> = ({ defaultTraits, allTraits, h
                     </MenuItem>
                 ))}
             </Select>
+            {helperText && <FormHelperText>{helperText}</FormHelperText>}
         </FormControl>
     );
 };

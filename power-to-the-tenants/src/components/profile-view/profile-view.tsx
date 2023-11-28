@@ -13,9 +13,14 @@ import {
 } from '@mui/material';
 import {Roomie} from "../../models/roomie.ts";
 import {Link, useParams} from "react-router-dom";
-import {Controller, useForm} from "react-hook-form";
 import DeleteRoomieDialog from "../delete-roomie-dialog/delete-roomie-dialog.tsx";
 import SelectTraits from "../select-traits/select-traits.tsx";
+
+
+const MIN_DESCRIPTION_LENGTH = 10;
+const MAX_DESCRIPTION_LENGTH = 300;
+const MIN_TRAITS_COUNT = 3;
+const MAX_TRAITS_COUNT = 8;
 
 export function ProfileView() {
 
@@ -33,27 +38,157 @@ export function ProfileView() {
     const isSmallScreen = useMediaQuery('(max-width:600px)');
 
     const [roomieTraits, setRoomieTraits] = useState<string[]>([]);
+    // TODO is this redundant?
     const [selectedTraits, setSelectedTraits] = useState<string[]>([]);
     const [allTraits, setAllTraits] = useState<string[]>([]);
     
-    const { register,
-            handleSubmit,
-            control,
-            formState: { }
-    } = useForm();
+    const isValidUrl = (url: string) => {
+        const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+        return urlRegex.test(url);
+    };
+    
+    // TODO shall this have traits?
+    const [form, setForm] = useState({
+        profileImage: '',
+        description: '',
+    });
 
-    useEffect(() => {
-        const fetchTraits = async () => {
-            try {
-                const traits = await fetchAllTraits();
-                setAllTraits(traits.map((trait) => trait.name));
-            } catch (error) {
-                console.error('Error fetching traits:', error);
+    const [validation, setValidation] = useState({
+        profileImage: true,
+        description: true,
+        traits: true,
+    });
+
+    const resetValidation = (field: string | undefined = undefined) => {
+        setValidation((prevValidation) => {
+            // If a specific field is provided, reset only that field; otherwise, reset all fields
+            if (field) {
+                return { ...prevValidation, [field]: true };
             }
-        };
+            else {
+                return {
+                    profileImage: true,
+                    description: true,
+                    traits: true,
+                };
+            }
+        });
+    };
+    
+    const handleProfileImageChange = (e: { target: { value: any; }; }) => {
+        setForm({
+            ...form,
+            profileImage: e.target.value,
+        });
+        resetValidation('profileImage');
+    };
+    
 
-        fetchTraits();
-    }, []);
+    const handleDescriptionChange = (e: { target: { value: any; }; }) => {
+        setForm({
+            ...form,
+            description: e.target.value,
+        });
+        resetValidation('description');
+    };
+
+    //TODO this should be consistent with the other handleThingsChange
+    const handleTraitsChange = (selectedTraits: string[]) => {
+        setSelectedTraits(selectedTraits);
+        resetValidation('traits')
+    };
+
+    const handleProfileImageSubmit = (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        if (roomie) {
+            const updatedRoomieDTO = {
+                profileImage: form.profileImage,
+                description: roomie?.description || '',
+            };
+
+            const isProfileImageValid = form.profileImage.trim() !== '' && isValidUrl(form.profileImage.trim());
+
+            setValidation({
+                ...validation,
+                profileImage: isProfileImageValid,
+            });
+            
+            // TODO this can be a function
+            if(isProfileImageValid) {
+                updateRoomie(roomie.id, updatedRoomieDTO)
+                    .then((updatedRoomie) => {
+                        setRoomie(updatedRoomie);
+                        openSnackbar("Profile image updated successfully", "success");
+                    })
+                    .catch((error) => {
+                        console.error("Error updating roomie's profile link:", error);
+                        openSnackbar("Profile image failed to update", "error");
+                    });
+            }
+        }
+    };
+
+    const handleDescriptionSubmit = (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        if (roomie) {
+            const updatedRoomieDTO = {
+                profileImage: roomie?.profileImage || '',
+                description: form.description,
+            };
+
+            const isDescriptionValid = updatedRoomieDTO.description.trim().length >= MIN_DESCRIPTION_LENGTH && updatedRoomieDTO.description.trim().length <= MAX_DESCRIPTION_LENGTH;
+            
+            setValidation({
+                ...validation,
+                description: isDescriptionValid,
+            });
+
+            // TODO this can be a function
+            if(isDescriptionValid) {
+                updateRoomie(roomie.id, updatedRoomieDTO)
+                    .then((updatedRoomie) => {
+                        setRoomie(updatedRoomie);
+                        openSnackbar("Description updated successfully", "success");
+                    })
+                    .catch((error) => {
+                        console.error("Error updating roomie's description:", error);
+                        openSnackbar("Description failed to update", "error");
+                    });
+            }
+            else {
+                openSnackbar("Description failed to update", "error");
+            }
+        }
+    };
+
+    const handleTraitsSubmit = (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        
+        if (roomie) {
+            const isMinTraitsValid = selectedTraits.length >= MIN_TRAITS_COUNT;
+            const isMaxTraitsValid = selectedTraits.length <= MAX_TRAITS_COUNT;
+            const isTraitsValid = isMinTraitsValid && isMaxTraitsValid;
+
+            setValidation({
+                ...validation,
+                traits: isTraitsValid,
+            });
+            
+            if(isTraitsValid) {
+                updateRoomieTraits(selectedTraits, roomie?.id)
+                    .then((r) => {
+                        setRoomie(r);
+                        openSnackbar("Traits updated succesfully", "success");
+                    })
+                    .catch((error) => {
+                        console.error("Error updating roomie's traits:", error);
+                        openSnackbar("Traits failed to update", "error");
+                    });
+            }
+        }
+    };
+
+
 
     // fetch roomie data when the page loads for the first time
     useEffect(() => {
@@ -66,8 +201,26 @@ export function ProfileView() {
             });
     }, []);
     
+    
+    // fetch traits data when the page loads for the first time
+    useEffect(() => {
+        const fetchTraits = async () => {
+            try {
+                const traits = await fetchAllTraits();
+                setAllTraits(traits.map((trait) => trait.name));
+            } catch (error) {
+                console.error('Error fetching traits:', error);
+            }
+        };
+
+        fetchTraits();
+    }, []);
+    
     const handleEditClick = () => {
         setIsEditing(!isEditing);
+        if(!isEditing){
+            resetValidation();
+        }
     };
     const openSnackbar = (message: SetStateAction<string>, severity: AlertColor) => {
         setSnackbarMessage(message);
@@ -75,14 +228,6 @@ export function ProfileView() {
         setIsSnackbarOpen(true);
     };
     
-    const handleConfirmDelete = () => {
-        setIsDeleteDialogOpen(false);
-    };
-
-    const handleChange = (selectedTraits: string[]) => {
-        setSelectedTraits(selectedTraits);
-    };
-
     
     return (
         <div className ={"profile-view"}>
@@ -92,31 +237,20 @@ export function ProfileView() {
                 <Grid item lg={12} xs={12 }>
                         <img className={"profile-image"} src={roomie && roomie.profileImage} alt="" />
                         {isEditing && (
-                            <form onSubmit={handleSubmit(async (data ) => {
-                                if (roomie) {
-                                    const updatedRoomieDTO = {
-                                        profileImage: data.imageLink,
-                                        description: roomie?.description || '',
-                                    };
-
-                                    updateRoomie(roomie.id, updatedRoomieDTO)
-                                        .then((updatedRoomie) => {
-                                            setRoomie(updatedRoomie);
-                                            openSnackbar("Profile image updated successfully", "success");
-                                        })
-                                        .catch((error) => {
-                                            console.error("Error updating roomie's profile link:", error);
-                                            openSnackbar("Profile image failed to update", "error");
-                                        });
-                                }
-                            })}>
+                            <form onSubmit={handleProfileImageSubmit}>
                                 <div>
                                     <TextField
                                         size={isSmallScreen ? "small" : "medium"}
                                         variant="outlined"
                                         label = "Image link"
                                         margin ="normal"
-                                        {...register("imageLink")}
+                                        onChange={handleProfileImageChange}
+                                        error={!validation.profileImage}
+                                        helperText={
+                                            !validation.profileImage &&
+                                            ((form.profileImage.trim() === '' && "Profile image is required.") ||
+                                                (!isValidUrl(form.profileImage.trim()) && "Invalid URL. Please enter a valid URL."))
+                                        }
                                     />
                                 </div>
                                 <div>
@@ -131,45 +265,25 @@ export function ProfileView() {
                 {/* Description */}
                 <Grid item lg={12} xs={12}>
                     {isEditing ? (
-                        <form onSubmit={handleSubmit(async (data ) => {
-                            if (roomie) {
-                                const updatedRoomieDTO = {
-                                    profileImage: roomie?.profileImage || '',
-                                    description: data.editedDescription,
-                                };
-
-                                updateRoomie(roomie.id, updatedRoomieDTO)
-                                    .then((updatedRoomie) => {
-                                        setRoomie(updatedRoomie);
-                                        openSnackbar("Description updated successfully", "success");
-                                    })
-                                    .catch((error) => {
-                                        console.error("Error updating roomie's description:", error);
-                                        openSnackbar("Description failed to update", "error");
-                                    });
-                            }
-                        })}>
+                        <form onSubmit={handleDescriptionSubmit}>
                             <div>
-                                {/* Use Controller to integrate RHF with the description field */}
-                                <Controller
-                                    name="editedDescription"
-                                    control={control}
+                                <TextField
                                     defaultValue={roomie?.description || ''}
-                                    render={({ field }) => (
-                                        <TextField
-                                            {...field}
-                                            multiline
-                                            id="standard-multiline-static"
-                                            label="Multiline"
-                                            minRows={5}
-                                            maxRows={10}
-                                            size={isSmallScreen ? 'small' : 'medium'}
-                                            variant="outlined"
-                                            margin="normal"
-                                            className={"input-description"}
-                                            style={{ width: '50%' }}
-                                        />
-                                    )}
+                                    multiline
+                                    id="standard-multiline-static"
+                                    label="Multiline"
+                                    minRows={3}
+                                    maxRows={5}
+                                    size={isSmallScreen ? 'small' : 'medium'}
+                                    variant="outlined"
+                                    margin="normal"
+                                    className={"input-description"}
+                                    style={{ width: '50%' }}
+                                    onChange={handleDescriptionChange}
+                                    error={!validation.description}
+                                    helperText={!validation.description &&
+                                        ((form.description.length <= MIN_DESCRIPTION_LENGTH && `Description must be at least ${MIN_DESCRIPTION_LENGTH} characters.`) ||
+                                            (form.description.length >= MAX_DESCRIPTION_LENGTH && `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters.`))}
                                 />
                             </div>
                             <Button
@@ -199,42 +313,31 @@ export function ProfileView() {
 
                     {isEditing && (
                         <div>
-                        <form onSubmit={handleSubmit((data ) => {
-                            // todo if you don't need the data maybe you don't need the form.
-                            console.log(data);
-                            updateRoomieTraits(selectedTraits, roomie?.id)                                    
-                                .then((r) => {
-                                setRoomie(r);
-                                openSnackbar("Traits updated succesfully", "success");
-                            })
-                                .catch((error) => {
-                                    console.error("Error updating roomie's traits:", error);
-                                    openSnackbar("Traits failed to update", "error");
-                                });
-                        })}>
-
-                            <SelectTraits
-                                defaultTraits={roomieTraits}
-                                allTraits={allTraits}
-                                handleChange={handleChange}
-                                isSmallScreen={isSmallScreen}
-                            />
-                            
-                            <div>
-                                <Button
-                                    type="submit"
-                                    size={isSmallScreen ? 'small' : 'large'}
-                                    variant="contained"
-                                    color="success"
-                                    className={'button-attribute button-update animation'}
-                                >
-                                    Update
-                                </Button>
-                            </div>
-                        </form>
+                            <form onSubmit={handleTraitsSubmit}>
+                                <SelectTraits
+                                    defaultTraits={roomieTraits}
+                                    allTraits={allTraits}
+                                    handleChange={handleTraitsChange}
+                                    isSmallScreen={isSmallScreen}
+                                    error={!validation.traits}
+                                    helperText={ !validation.traits &&
+                                        ((selectedTraits.length < MIN_TRAITS_COUNT && `Select at least ${MIN_TRAITS_COUNT} traits.`) ||
+                                            (selectedTraits.length > MAX_TRAITS_COUNT && `You cannot select more than ${MAX_TRAITS_COUNT} traits.`))}
+                                />
+                                <div>
+                                    <Button
+                                        type="submit"
+                                        size={isSmallScreen ? 'small' : 'large'}
+                                        variant="contained"
+                                        color="success"
+                                        className={'button-attribute button-update animation'}
+                                    >
+                                        Update
+                                    </Button>
+                                </div>
+                            </form>
                         </div>
                     )}
-
                 </Grid>
 
                 {/* Edit, Delete and Back Buttons */}
@@ -272,7 +375,7 @@ export function ProfileView() {
                 <DeleteRoomieDialog
                     isOpen={isDeleteDialogOpen}
                     onClose={() => setIsDeleteDialogOpen(false)}
-                    onConfirmDelete={handleConfirmDelete}
+                    onConfirmDelete={()=> setIsDeleteDialogOpen(false)}
                     deletingRoomieId={id}
                 />
                 
