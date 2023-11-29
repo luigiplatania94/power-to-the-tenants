@@ -31,14 +31,13 @@ export function ProfileView() {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     
     const isSmallScreen = useMediaQuery('(max-width:600px)');
-
-    const [roomieTraits, setRoomieTraits] = useState<string[]>([]);
-    // TODO is this redundant?
+    
     const [selectedTraits, setSelectedTraits] = useState<string[]>([]);
+    const [roomieTraits, setRoomieTraits] = useState<string[]>([]);
     const [allTraits, setAllTraits] = useState<string[]>([]);
     
     
-    // TODO shall this have traits?
+    // TODO shall this have roomieTraits?
     const [form, setForm] = useState({
         profileImage: '',
         description: '',
@@ -169,10 +168,11 @@ export function ProfileView() {
                 updateRoomieTraits(roomie?.id, selectedTraits)
                     .then((r) => {
                         setRoomie(r);
+                        setRoomieTraits(selectedTraits);
                         openSnackbar("Traits updated succesfully", "success");
                     })
                     .catch((error) => {
-                        console.error("Error updating roomie's traits:", error);
+                        console.error("Error updating roomie's roomieTraits:", error);
                         openSnackbar("Traits failed to update", "error");
                     });
             }
@@ -193,14 +193,14 @@ export function ProfileView() {
     }, []);
     
     
-    // fetch traits data when the page loads for the first time
+    // fetch allTraits data when the page loads for the first time
     useEffect(() => {
         const fetchTraits = async () => {
             try {
                 const traits = await fetchAllTraits();
                 setAllTraits(traits.map((trait) => trait.name));
             } catch (error) {
-                console.error('Error fetching traits:', error);
+                console.error('Error fetching allTraits:', error);
             }
         };
 
