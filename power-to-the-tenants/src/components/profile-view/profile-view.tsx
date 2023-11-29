@@ -15,13 +15,7 @@ import {Roomie} from "../../models/roomie.ts";
 import {Link, useParams} from "react-router-dom";
 import DeleteRoomieDialog from "../delete-roomie-dialog/delete-roomie-dialog.tsx";
 import SelectTraits from "../select-traits/select-traits.tsx";
-import {isValidURL} from "../../utilities/components-utils.ts";
-
-
-const MIN_DESCRIPTION_LENGTH = 10;
-const MAX_DESCRIPTION_LENGTH = 300;
-const MIN_TRAITS_COUNT = 3;
-const MAX_TRAITS_COUNT = 8;
+import {isValidURL, validationConsts} from "../../utilities/components-utils.ts";
 
 export function ProfileView() {
 
@@ -133,7 +127,7 @@ export function ProfileView() {
                 description: form.description,
             };
 
-            const isDescriptionValid = updatedRoomieDTO.description.trim().length >= MIN_DESCRIPTION_LENGTH && updatedRoomieDTO.description.trim().length <= MAX_DESCRIPTION_LENGTH;
+            const isDescriptionValid = updatedRoomieDTO.description.trim().length >= validationConsts.MIN_DESCRIPTION_LENGTH && updatedRoomieDTO.description.trim().length <= validationConsts.MAX_DESCRIPTION_LENGTH;
             
             setValidation({
                 ...validation,
@@ -162,8 +156,8 @@ export function ProfileView() {
         e.preventDefault();
         
         if (roomie) {
-            const isMinTraitsValid = selectedTraits.length >= MIN_TRAITS_COUNT;
-            const isMaxTraitsValid = selectedTraits.length <= MAX_TRAITS_COUNT;
+            const isMinTraitsValid = selectedTraits.length >= validationConsts.MIN_TRAITS_COUNT;
+            const isMaxTraitsValid = selectedTraits.length <= validationConsts.MAX_TRAITS_COUNT;
             const isTraitsValid = isMinTraitsValid && isMaxTraitsValid;
 
             setValidation({
@@ -279,8 +273,8 @@ export function ProfileView() {
                                     onChange={handleDescriptionChange}
                                     error={!validation.description}
                                     helperText={!validation.description &&
-                                        ((form.description.length <= MIN_DESCRIPTION_LENGTH && `Description must be at least ${MIN_DESCRIPTION_LENGTH} characters.`) ||
-                                            (form.description.length >= MAX_DESCRIPTION_LENGTH && `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters.`))}
+                                        ((form.description.length <= validationConsts.MIN_DESCRIPTION_LENGTH && `Description must be at least ${validationConsts.MIN_DESCRIPTION_LENGTH} characters.`) ||
+                                            (form.description.length >= validationConsts.MAX_DESCRIPTION_LENGTH && `Description cannot exceed ${validationConsts.MAX_DESCRIPTION_LENGTH} characters.`))}
                                 />
                             </div>
                             <Button
@@ -318,8 +312,8 @@ export function ProfileView() {
                                     isSmallScreen={isSmallScreen}
                                     error={!validation.traits}
                                     helperText={ !validation.traits &&
-                                        ((selectedTraits.length < MIN_TRAITS_COUNT && `Select at least ${MIN_TRAITS_COUNT} traits.`) ||
-                                            (selectedTraits.length > MAX_TRAITS_COUNT && `You cannot select more than ${MAX_TRAITS_COUNT} traits.`))}
+                                        ((selectedTraits.length < validationConsts.MIN_TRAITS_COUNT && `Select at least ${validationConsts.MIN_TRAITS_COUNT} traits.`) ||
+                                            (selectedTraits.length > validationConsts.MAX_TRAITS_COUNT && `You cannot select more than ${validationConsts.MAX_TRAITS_COUNT} traits.`))}
                                 />
                                 <div>
                                     <Button

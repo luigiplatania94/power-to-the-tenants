@@ -3,12 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } 
 import { createRoomieDTO } from "../../DTOs/createRoomieDTO.ts";
 import {createRoomie, fetchAllTraits} from "../../services/roomie-service.ts";
 import SelectTraits from "../select-traits/select-traits.tsx";
-import {isValidURL} from "../../utilities/components-utils.ts";
-
-const MIN_DESCRIPTION_LENGTH = 10;
-const MAX_DESCRIPTION_LENGTH = 300;
-const MIN_TRAITS_COUNT = 3;
-const MAX_TRAITS_COUNT = 8;
+import {isValidURL, validationConsts} from "../../utilities/components-utils.ts";;
 
 interface CreateRoomieDialogProps {
     isOpen: boolean;
@@ -64,11 +59,11 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
     const handleCreateRoomie = () => {
         // Validation checks
         const isProfileImageValid = form.profileImage.trim() !== '' && isValidURL(form.profileImage.trim());
-        const isDescriptionValid = form.description.trim().length >= MIN_DESCRIPTION_LENGTH && form.description.trim().length <= MAX_DESCRIPTION_LENGTH;
+        const isDescriptionValid = form.description.trim().length >= validationConsts.MIN_DESCRIPTION_LENGTH && form.description.trim().length <= validationConsts.MAX_DESCRIPTION_LENGTH;
         
 
-        const isMinTraitsValid = form.traits.length >= MIN_TRAITS_COUNT;
-        const isMaxTraitsValid = form.traits.length <= MAX_TRAITS_COUNT;
+        const isMinTraitsValid = form.traits.length >= validationConsts.MIN_TRAITS_COUNT;
+        const isMaxTraitsValid = form.traits.length <= validationConsts.MAX_TRAITS_COUNT;
         const isTraitsValid = isMinTraitsValid && isMaxTraitsValid;
 
         setValidation({
@@ -129,8 +124,8 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                     }}
                     error={!validation.description}
                     helperText={!validation.description &&                     
-                        ((form.description.length <= MIN_DESCRIPTION_LENGTH && `Description must be at least ${MIN_DESCRIPTION_LENGTH} characters.`) ||
-                            (form.description.length >= MAX_DESCRIPTION_LENGTH && `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters.`))}
+                        ((form.description.length <= validationConsts.MIN_DESCRIPTION_LENGTH && `Description must be at least ${validationConsts.MIN_DESCRIPTION_LENGTH} characters.`) ||
+                            (form.description.length >= validationConsts.MAX_DESCRIPTION_LENGTH && `Description cannot exceed ${validationConsts.MAX_DESCRIPTION_LENGTH} characters.`))}
                 />
                 <SelectTraits
                     allTraits={allTraits} 
@@ -140,8 +135,8 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                     }}
                     error={!validation.traits}
                     helperText={ !validation.traits &&
-                        ((form.traits.length < MIN_TRAITS_COUNT && `Select at least ${MIN_TRAITS_COUNT} traits.`) ||
-                            (form.traits.length > MAX_TRAITS_COUNT && `You cannot select more than ${MAX_TRAITS_COUNT} traits.`))}
+                        ((form.traits.length < validationConsts.MIN_TRAITS_COUNT && `Select at least ${validationConsts.MIN_TRAITS_COUNT} traits.`) ||
+                            (form.traits.length > validationConsts.MAX_TRAITS_COUNT && `You cannot select more than ${validationConsts.MAX_TRAITS_COUNT} traits.`))}
                 />
             </DialogContent>
             <DialogActions>
