@@ -4,7 +4,7 @@ import {Box, Chip, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedIn
 interface TraitsSelectProps {
     defaultTraits?: string[];
     allTraits: string[];
-    handleChange: (selectedTraits: string[]) => void; // Update this line
+    onChange: (selectedTraits: string[]) => void; // Update this line
     isSmallScreen?: boolean;
     error?:boolean;
     helperText?:React.ReactNode;
@@ -12,8 +12,8 @@ interface TraitsSelectProps {
 
 const SelectTraits: React.FC<TraitsSelectProps> = ({ 
        defaultTraits, 
-       allTraits, 
-       handleChange, 
+       allTraits,
+       onChange, 
        isSmallScreen, 
        error,
        helperText,
@@ -22,11 +22,11 @@ const SelectTraits: React.FC<TraitsSelectProps> = ({
         <FormControl margin="normal" variant="outlined" size={isSmallScreen ? 'small' : 'medium'} error={error}>
             <InputLabel id="traits-label">Traits</InputLabel>
             <Select
-                defaultValue={defaultTraits || allTraits.slice(0, 3)}
+                defaultValue={defaultTraits || allTraits.slice(0, 2)}
                 labelId="traits-label"
                 id="traits-select"
                 multiple
-                onChange={(event) => handleChange(event.target.value as string[])}
+                onChange={(event) => onChange(event.target.value as string[])}
                 input={<OutlinedInput label="Traits" />}
                 renderValue={(selected) => (
                     <Box sx={{  display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>

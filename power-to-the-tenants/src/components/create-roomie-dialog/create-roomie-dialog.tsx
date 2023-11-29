@@ -139,7 +139,7 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                 />
                 <SelectTraits
                     allTraits={allTraits} 
-                    handleChange={(selectedTraits) => {
+                    onChange={(selectedTraits) => {
                         setForm({ ...form, traits: selectedTraits });
                         resetValidation('traits')
                     }}

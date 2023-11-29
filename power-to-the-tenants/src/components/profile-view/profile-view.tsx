@@ -175,7 +175,7 @@ export function ProfileView() {
             });
             
             if(isTraitsValid) {
-                updateRoomieTraits(selectedTraits, roomie?.id)
+                updateRoomieTraits(roomie?.id, selectedTraits)
                     .then((r) => {
                         setRoomie(r);
                         openSnackbar("Traits updated succesfully", "success");
@@ -317,7 +317,7 @@ export function ProfileView() {
                                 <SelectTraits
                                     defaultTraits={roomieTraits}
                                     allTraits={allTraits}
-                                    handleChange={handleTraitsChange}
+                                    onChange={handleTraitsChange}
                                     isSmallScreen={isSmallScreen}
                                     error={!validation.traits}
                                     helperText={ !validation.traits &&
