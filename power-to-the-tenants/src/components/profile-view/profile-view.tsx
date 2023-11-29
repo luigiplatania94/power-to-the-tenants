@@ -209,8 +209,16 @@ export function ProfileView() {
     
     const handleEditClick = () => {
         setIsEditing(!isEditing);
-        if(!isEditing){
+        if(!isEditing) {
             resetValidation();
+
+            //TODO can they be utility functions?
+
+            // Apply the bounceFromRight class to the relevant elements when entering edit mode
+            const elementsToAnimate = document.querySelectorAll('.bounceFromRightAnimation');
+            elementsToAnimate.forEach((element) => {
+                element.classList.add('bounceFromRight');
+            });
         }
     };
     const openSnackbar = (message: SetStateAction<string>, severity: AlertColor) => {
@@ -231,6 +239,7 @@ export function ProfileView() {
                             <form onSubmit={handleProfileImageSubmit}>
                                 <div>
                                     <TextField
+                                        style={{ animation: 'bounceFromRight 1.0s ease-in-out' }}
                                         size={isSmallScreen ? "small" : "medium"}
                                         variant="outlined"
                                         label = "Image link"
@@ -245,7 +254,7 @@ export function ProfileView() {
                                     />
                                 </div>
                                 <div>
-                                    <Button type="submit" size={isSmallScreen ? "small" : "large"} variant="contained" color="success" className="button-update animation">
+                                    <Button type="submit" size={isSmallScreen ? "small" : "large"} variant="contained" color="success" className="bounceFromRight animation">
                                         Update
                                     </Button>
                                 </div>
@@ -259,6 +268,7 @@ export function ProfileView() {
                         <form onSubmit={handleDescriptionSubmit}>
                             <div>
                                 <TextField
+                                    style={{ animation: 'bounceFromRight 1.0s ease-in-out', width: '50%' }}
                                     defaultValue={roomie?.description || ''}
                                     multiline
                                     id="standard-multiline-static"
@@ -269,7 +279,6 @@ export function ProfileView() {
                                     variant="outlined"
                                     margin="normal"
                                     className={"input-description"}
-                                    style={{ width: '50%' }}
                                     onChange={handleDescriptionChange}
                                     error={!validation.description}
                                     helperText={!validation.description &&
@@ -282,7 +291,7 @@ export function ProfileView() {
                                 size={isSmallScreen ? 'small' : 'large'}
                                 variant="contained"
                                 color="success"
-                                className={'button-update animation'}
+                                className={'bounceFromRight animation'}
                             >
                                 Update
                             </Button>
@@ -321,7 +330,7 @@ export function ProfileView() {
                                         size={isSmallScreen ? 'small' : 'large'}
                                         variant="contained"
                                         color="success"
-                                        className={'button-attribute button-update animation'}
+                                        className={'button-attribute bounceFromRight animation'}
                                     >
                                         Update
                                     </Button>
@@ -332,7 +341,7 @@ export function ProfileView() {
                 </Grid>
 
                 {/* Edit, Delete and Back Buttons */}
-                <Grid item lg={12} xs={12}>
+                <Grid item lg={12} xs={12} className={`fade-in ${!isEditing ? 'fade-in-visible' : ''}`}>
                         <Button style={{ marginRight: '10px' }} size={isSmallScreen ? "small" : "large"} variant="contained" color="success" onClick={handleEditClick}>
                             {isEditing ? 'Stop' : 'Edit'}
                         </Button>

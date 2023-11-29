@@ -4,12 +4,6 @@
   overflow: hidden;
 }
 
-.button-update.animation {
-  animation: wiggleAnimation 0.5s infinite; 
-  animation-duration: 300ms;
-  animation-iteration-count:1;
-}
-
 .profile-image {
   margin-top: 1rem;
   width: 200px; 
@@ -32,6 +26,9 @@
   margin : 0.3rem;  
 }
 
+.bounceFromRight {
+  animation: bounceFromRight 1.0s ease-in-out; /* Adjust the duration and easing as needed */
+}
 
 @media (max-width: 425px) {
   .profile-image {
@@ -43,14 +40,28 @@
   }
 }
 
-
-@keyframes wiggleAnimation {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(4deg); }
-  50% { transform: rotate(0deg); }
-  75% { transform: rotate(-4deg); }
-  100% { transform: rotate(0deg); }
+/* Add this to your CSS file */
+@keyframes bounceFromRight {
+  0% {
+    transform: translateX(100%);
+  }
+  20% {
+    transform: translateX(-20px);
+  }
+  40% {
+    transform: translateX(10px);
+  }
+  60% {
+    transform: translateX(-5px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
+
 
 
 

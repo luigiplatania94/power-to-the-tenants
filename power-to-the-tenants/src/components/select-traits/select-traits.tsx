@@ -19,8 +19,8 @@ const SelectTraits: React.FC<TraitsSelectProps> = ({
        helperText,
 }) => {
     return (
-        <FormControl margin="normal" variant="outlined" size={isSmallScreen ? 'small' : 'medium'} error={error}>
-            <InputLabel id="traits-label">Traits</InputLabel>
+        <FormControl margin="normal" variant="outlined" size={isSmallScreen ? 'small' : 'medium'} error={error} className={"bounceFromRight"}>
+            <InputLabel  id="traits-label">Traits</InputLabel>
             <Select
                 defaultValue={defaultTraits || allTraits.slice(0, 2)}
                 labelId="traits-label"
