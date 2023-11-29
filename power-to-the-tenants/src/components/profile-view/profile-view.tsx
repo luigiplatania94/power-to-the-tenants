@@ -15,6 +15,7 @@ import {Roomie} from "../../models/roomie.ts";
 import {Link, useParams} from "react-router-dom";
 import DeleteRoomieDialog from "../delete-roomie-dialog/delete-roomie-dialog.tsx";
 import SelectTraits from "../select-traits/select-traits.tsx";
+import {isValidURL} from "../../utilities/components-utils.ts";
 
 
 const MIN_DESCRIPTION_LENGTH = 10;
@@ -42,10 +43,6 @@ export function ProfileView() {
     const [selectedTraits, setSelectedTraits] = useState<string[]>([]);
     const [allTraits, setAllTraits] = useState<string[]>([]);
     
-    const isValidUrl = (url: string) => {
-        const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
-        return urlRegex.test(url);
-    };
     
     // TODO shall this have traits?
     const [form, setForm] = useState({
@@ -106,7 +103,7 @@ export function ProfileView() {
                 description: roomie?.description || '',
             };
 
-            const isProfileImageValid = form.profileImage.trim() !== '' && isValidUrl(form.profileImage.trim());
+            const isProfileImageValid = form.profileImage.trim() !== '' && isValidURL(form.profileImage.trim());
 
             setValidation({
                 ...validation,
@@ -249,7 +246,7 @@ export function ProfileView() {
                                         helperText={
                                             !validation.profileImage &&
                                             ((form.profileImage.trim() === '' && "Profile image is required.") ||
-                                                (!isValidUrl(form.profileImage.trim()) && "Invalid URL. Please enter a valid URL."))
+                                                (!isValidURL(form.profileImage.trim()) && "Invalid URL. Please enter a valid URL."))
                                         }
                                     />
                                 </div>

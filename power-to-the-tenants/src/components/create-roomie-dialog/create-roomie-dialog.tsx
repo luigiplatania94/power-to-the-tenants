@@ -3,6 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } 
 import { createRoomieDTO } from "../../DTOs/createRoomieDTO.ts";
 import {createRoomie, fetchAllTraits} from "../../services/roomie-service.ts";
 import SelectTraits from "../select-traits/select-traits.tsx";
+import {isValidURL} from "../../utilities/components-utils.ts";
 
 const MIN_DESCRIPTION_LENGTH = 10;
 const MAX_DESCRIPTION_LENGTH = 300;
@@ -16,12 +17,6 @@ interface CreateRoomieDialogProps {
 }
 
 const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose, onConfirmCreate }) => {
-
-    // TODO this can be a utility function. It's used in different places
-    const isValidUrl = (url: string) => {
-        const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
-        return urlRegex.test(url);
-    };
     
     const [form, setForm] = useState<createRoomieDTO>({
         profileImage: '',
@@ -68,7 +63,7 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
     
     const handleCreateRoomie = () => {
         // Validation checks
-        const isProfileImageValid = form.profileImage.trim() !== '' && isValidUrl(form.profileImage.trim());
+        const isProfileImageValid = form.profileImage.trim() !== '' && isValidURL(form.profileImage.trim());
         const isDescriptionValid = form.description.trim().length >= MIN_DESCRIPTION_LENGTH && form.description.trim().length <= MAX_DESCRIPTION_LENGTH;
         
 
@@ -119,7 +114,7 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                     helperText={
                         !validation.profileImage &&
                         ((form.profileImage.trim() === '' && "Profile image is required.") ||
-                            (!isValidUrl(form.profileImage.trim()) && "Invalid URL. Please enter a valid URL."))
+                            (!isValidURL(form.profileImage.trim()) && "Invalid URL. Please enter a valid URL."))
                     }
                 />
                 <TextField
@@ -162,7 +157,6 @@ const CreateRoomieDialog: React.FC<CreateRoomieDialogProps> = ({ isOpen, onClose
                         }); 
                     }}
                 >Cancel</Button>
-                // TODO I should use mui form like profile view.
                 <Button onClick={handleCreateRoomie} color="success">
                     Create
                 </Button>
