@@ -320,6 +320,7 @@ export function ProfileView() {
                                     onChange={handleTraitsChange}
                                     isSmallScreen={isSmallScreen}
                                     error={!validation.traits}
+                                    animate = {true}
                                     helperText={ !validation.traits &&
                                         ((selectedTraits.length < validationConsts.MIN_TRAITS_COUNT && `Select at least ${validationConsts.MIN_TRAITS_COUNT} traits.`) ||
                                             (selectedTraits.length > validationConsts.MAX_TRAITS_COUNT && `You cannot select more than ${validationConsts.MAX_TRAITS_COUNT} traits.`))}

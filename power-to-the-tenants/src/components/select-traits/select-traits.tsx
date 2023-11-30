@@ -8,6 +8,7 @@ interface TraitsSelectProps {
     isSmallScreen?: boolean;
     error?:boolean;
     helperText?:React.ReactNode;
+    animate?: boolean;
 }
 
 const SelectTraits: React.FC<TraitsSelectProps> = ({ 
@@ -17,9 +18,11 @@ const SelectTraits: React.FC<TraitsSelectProps> = ({
        isSmallScreen, 
        error,
        helperText,
+       animate = false, // Default to true if not provided
 }) => {
+
     return (
-        <FormControl margin="normal" variant="outlined" size={isSmallScreen ? 'small' : 'medium'} error={error} className={"bounceFromRight"}>
+        <FormControl margin="normal" variant="outlined" size={isSmallScreen ? 'small' : 'medium'} error={error} className={animate ? 'bounceFromRight' : ''}>
             <InputLabel  id="traits-label">Traits</InputLabel>
             <Select
                 defaultValue={defaultTraits || allTraits.slice(0, 2)}
