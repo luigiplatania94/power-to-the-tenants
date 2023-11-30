@@ -42,7 +42,7 @@ export const fetchAllTraits = async (): Promise<Trait[]> => {
     }
 }
 
-export async function updateRoomieTraits(traits : string[], id: string | undefined) {
+export async function updateRoomieTraits(id: string | undefined, traits : string[]) {
     try {
         console.log(traits);
         console.log(id);

@@ -15,12 +15,7 @@ import {Roomie} from "../../models/roomie.ts";
 import {Link, useParams} from "react-router-dom";
 import DeleteRoomieDialog from "../delete-roomie-dialog/delete-roomie-dialog.tsx";
 import SelectTraits from "../select-traits/select-traits.tsx";
-
-
-const MIN_DESCRIPTION_LENGTH = 10;
-const MAX_DESCRIPTION_LENGTH = 300;
-const MIN_TRAITS_COUNT = 3;
-const MAX_TRAITS_COUNT = 8;
+import {isValidURL, validationConsts} from "../../utilities/components-utils.ts";
 
 export function ProfileView() {
 
@@ -36,18 +31,13 @@ export function ProfileView() {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     
     const isSmallScreen = useMediaQuery('(max-width:600px)');
-
-    const [roomieTraits, setRoomieTraits] = useState<string[]>([]);
-    // TODO is this redundant?
+    
     const [selectedTraits, setSelectedTraits] = useState<string[]>([]);
+    const [roomieTraits, setRoomieTraits] = useState<string[]>([]);
     const [allTraits, setAllTraits] = useState<string[]>([]);
     
-    const isValidUrl = (url: string) => {
-        const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
-        return urlRegex.test(url);
-    };
     
-    // TODO shall this have traits?
+    // TODO shall this have roomieTraits?
     const [form, setForm] = useState({
         profileImage: '',
         description: '',
@@ -106,7 +96,7 @@ export function ProfileView() {
                 description: roomie?.description || '',
             };
 
-            const isProfileImageValid = form.profileImage.trim() !== '' && isValidUrl(form.profileImage.trim());
+            const isProfileImageValid = form.profileImage.trim() !== '' && isValidURL(form.profileImage.trim());
 
             setValidation({
                 ...validation,
@@ -136,7 +126,7 @@ export function ProfileView() {
                 description: form.description,
             };
 
-            const isDescriptionValid = updatedRoomieDTO.description.trim().length >= MIN_DESCRIPTION_LENGTH && updatedRoomieDTO.description.trim().length <= MAX_DESCRIPTION_LENGTH;
+            const isDescriptionValid = updatedRoomieDTO.description.trim().length >= validationConsts.MIN_DESCRIPTION_LENGTH && updatedRoomieDTO.description.trim().length <= validationConsts.MAX_DESCRIPTION_LENGTH;
             
             setValidation({
                 ...validation,
@@ -165,8 +155,8 @@ export function ProfileView() {
         e.preventDefault();
         
         if (roomie) {
-            const isMinTraitsValid = selectedTraits.length >= MIN_TRAITS_COUNT;
-            const isMaxTraitsValid = selectedTraits.length <= MAX_TRAITS_COUNT;
+            const isMinTraitsValid = selectedTraits.length >= validationConsts.MIN_TRAITS_COUNT;
+            const isMaxTraitsValid = selectedTraits.length <= validationConsts.MAX_TRAITS_COUNT;
             const isTraitsValid = isMinTraitsValid && isMaxTraitsValid;
 
             setValidation({
@@ -175,13 +165,14 @@ export function ProfileView() {
             });
             
             if(isTraitsValid) {
-                updateRoomieTraits(selectedTraits, roomie?.id)
+                updateRoomieTraits(roomie?.id, selectedTraits)
                     .then((r) => {
                         setRoomie(r);
+                        setRoomieTraits(selectedTraits);
                         openSnackbar("Traits updated succesfully", "success");
                     })
                     .catch((error) => {
-                        console.error("Error updating roomie's traits:", error);
+                        console.error("Error updating roomie's roomieTraits:", error);
                         openSnackbar("Traits failed to update", "error");
                     });
             }
@@ -202,14 +193,14 @@ export function ProfileView() {
     }, []);
     
     
-    // fetch traits data when the page loads for the first time
+    // fetch allTraits data when the page loads for the first time
     useEffect(() => {
         const fetchTraits = async () => {
             try {
                 const traits = await fetchAllTraits();
                 setAllTraits(traits.map((trait) => trait.name));
             } catch (error) {
-                console.error('Error fetching traits:', error);
+                console.error('Error fetching allTraits:', error);
             }
         };
 
@@ -218,8 +209,16 @@ export function ProfileView() {
     
     const handleEditClick = () => {
         setIsEditing(!isEditing);
-        if(!isEditing){
+        if(!isEditing) {
             resetValidation();
+
+            //TODO can they be utility functions?
+
+            // Apply the bounceFromRight class to the relevant elements when entering edit mode
+            const elementsToAnimate = document.querySelectorAll('.bounceFromRightAnimation');
+            elementsToAnimate.forEach((element) => {
+                element.classList.add('bounceFromRight');
+            });
         }
     };
     const openSnackbar = (message: SetStateAction<string>, severity: AlertColor) => {
@@ -240,6 +239,7 @@ export function ProfileView() {
                             <form onSubmit={handleProfileImageSubmit}>
                                 <div>
                                     <TextField
+                                        style={{ animation: 'bounceFromRight 1.0s ease-in-out' }}
                                         size={isSmallScreen ? "small" : "medium"}
                                         variant="outlined"
                                         label = "Image link"
@@ -249,12 +249,12 @@ export function ProfileView() {
                                         helperText={
                                             !validation.profileImage &&
                                             ((form.profileImage.trim() === '' && "Profile image is required.") ||
-                                                (!isValidUrl(form.profileImage.trim()) && "Invalid URL. Please enter a valid URL."))
+                                                (!isValidURL(form.profileImage.trim()) && "Invalid URL. Please enter a valid URL."))
                                         }
                                     />
                                 </div>
                                 <div>
-                                    <Button type="submit" size={isSmallScreen ? "small" : "large"} variant="contained" color="success" className="button-update animation">
+                                    <Button type="submit" size={isSmallScreen ? "small" : "large"} variant="contained" color="success" className="bounceFromRight animation">
                                         Update
                                     </Button>
                                 </div>
@@ -268,6 +268,7 @@ export function ProfileView() {
                         <form onSubmit={handleDescriptionSubmit}>
                             <div>
                                 <TextField
+                                    style={{ animation: 'bounceFromRight 1.0s ease-in-out', width: '50%' }}
                                     defaultValue={roomie?.description || ''}
                                     multiline
                                     id="standard-multiline-static"
@@ -278,12 +279,11 @@ export function ProfileView() {
                                     variant="outlined"
                                     margin="normal"
                                     className={"input-description"}
-                                    style={{ width: '50%' }}
                                     onChange={handleDescriptionChange}
                                     error={!validation.description}
                                     helperText={!validation.description &&
-                                        ((form.description.length <= MIN_DESCRIPTION_LENGTH && `Description must be at least ${MIN_DESCRIPTION_LENGTH} characters.`) ||
-                                            (form.description.length >= MAX_DESCRIPTION_LENGTH && `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters.`))}
+                                        ((form.description.length <= validationConsts.MIN_DESCRIPTION_LENGTH && `Description must be at least ${validationConsts.MIN_DESCRIPTION_LENGTH} characters.`) ||
+                                            (form.description.length >= validationConsts.MAX_DESCRIPTION_LENGTH && `Description cannot exceed ${validationConsts.MAX_DESCRIPTION_LENGTH} characters.`))}
                                 />
                             </div>
                             <Button
@@ -291,7 +291,7 @@ export function ProfileView() {
                                 size={isSmallScreen ? 'small' : 'large'}
                                 variant="contained"
                                 color="success"
-                                className={'button-update animation'}
+                                className={'bounceFromRight animation'}
                             >
                                 Update
                             </Button>
@@ -317,12 +317,12 @@ export function ProfileView() {
                                 <SelectTraits
                                     defaultTraits={roomieTraits}
                                     allTraits={allTraits}
-                                    handleChange={handleTraitsChange}
+                                    onChange={handleTraitsChange}
                                     isSmallScreen={isSmallScreen}
                                     error={!validation.traits}
                                     helperText={ !validation.traits &&
-                                        ((selectedTraits.length < MIN_TRAITS_COUNT && `Select at least ${MIN_TRAITS_COUNT} traits.`) ||
-                                            (selectedTraits.length > MAX_TRAITS_COUNT && `You cannot select more than ${MAX_TRAITS_COUNT} traits.`))}
+                                        ((selectedTraits.length < validationConsts.MIN_TRAITS_COUNT && `Select at least ${validationConsts.MIN_TRAITS_COUNT} traits.`) ||
+                                            (selectedTraits.length > validationConsts.MAX_TRAITS_COUNT && `You cannot select more than ${validationConsts.MAX_TRAITS_COUNT} traits.`))}
                                 />
                                 <div>
                                     <Button
@@ -330,7 +330,7 @@ export function ProfileView() {
                                         size={isSmallScreen ? 'small' : 'large'}
                                         variant="contained"
                                         color="success"
-                                        className={'button-attribute button-update animation'}
+                                        className={'button-attribute bounceFromRight animation'}
                                     >
                                         Update
                                     </Button>
@@ -341,7 +341,7 @@ export function ProfileView() {
                 </Grid>
 
                 {/* Edit, Delete and Back Buttons */}
-                <Grid item lg={12} xs={12}>
+                <Grid item lg={12} xs={12} className={`fade-in ${!isEditing ? 'fade-in-visible' : ''}`}>
                         <Button style={{ marginRight: '10px' }} size={isSmallScreen ? "small" : "large"} variant="contained" color="success" onClick={handleEditClick}>
                             {isEditing ? 'Stop' : 'Edit'}
                         </Button>
